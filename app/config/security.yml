@@ -1,0 +1,26 @@
+security:
+    encoders:
+        AppBundle\Entity\User: bcrypt
+    providers:
+        database_users:
+            entity: { class: AppBundle:User, property: email }
+    firewalls:
+        # disables authentication for assets and the profiler, adapt it according to your needs
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+
+        main:
+            anonymous: ~
+            guard:
+                authenticators:
+                - app.form_login_authenticator
+            logout:
+                path: /logout
+                target: /
+    access_control:
+    - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+    - { path: ^/register, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+    - { path: ^/api, roles: ROLE_API_USER }
+    - { path: ^/, roles: [ROLE_USER, ROLE_DIVISION,ROLE_DIRECTEUR,ROLE_BUREAU_ORDRE] }
+

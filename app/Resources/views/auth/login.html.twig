@@ -1,0 +1,99 @@
+{% block head %}
+    <meta charset="utf-8">
+
+    <title>Gestion courrier : Login</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <!-- Latest compiled and minified Bootstrap CSS-->
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <style>
+
+        body {
+
+            background: url({{ asset('images/background5.jpg') }}) no-repeat center center fixed;
+
+            background-size: cover;
+
+        }
+
+        .center-block { float: none; }
+
+        form {
+
+            margin-top: 50%;
+
+            padding: 5%;
+
+            background: rgba(0,0,0,0.7);
+
+            color: #FFF;
+
+        }
+
+    </style>
+{% endblock %}
+{% block body %}
+    <div class="container">
+
+        <div class="row">
+
+            <div class="col-sm-6 center-block">
+
+                <form role="form" method="POST" action="{{ path('security_login_check') }}">
+                    {% if error is defined %}
+                        {% if error %}
+                            <div class="alert alert-danger">
+                                {{ error.messageKey|trans(error.messageData) }}
+                            </div>
+                        {% endif %}
+                    {% endif %}
+
+                    <h3><img class="img-circle" src="{{ asset('images/avatar.jpg') }}" alt="logo"> Login</h3>
+
+                    <div class="form-group">
+
+                        <label for="email" class="col-md-4 control-label">Address E-Mail</label>
+                        {% if last_username is defined %}
+                            <input id="email" type="email" class="form-control" name="_email" value="{{ last_username }}">
+                        {% else%}
+                            <input id="email" type="email" class="form-control" name="_email" value="">
+
+                        {% endif %}
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label for="password" class="col-md-4 control-label">Mot de passe</label>
+
+                        <input id="password" type="password" class="form-control" name="_password">
+
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fa fa-btn fa-sign-in"></i> Connexion
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!--latest jQuery 3-->
+
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+
+    <!--Bootstrap-->
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+{% endblock %}
