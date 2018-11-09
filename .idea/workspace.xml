@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="4aff676e-1ab8-437d-ae3e-bd3f2893a8a3" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Resources/views/auth/home.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/app/Resources/views/auth/home.html.twig" afterDir="false" />
-    </list>
+    <list default="true" id="4aff676e-1ab8-437d-ae3e-bd3f2893a8a3" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -354,15 +351,15 @@
       <workItem from="1541409998230" duration="5000" />
       <workItem from="1541413102139" duration="30918000" />
       <workItem from="1541668763436" duration="21741000" />
-      <workItem from="1541778642115" duration="148000" />
+      <workItem from="1541778642115" duration="665000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="56602000" />
+    <option name="totallyTimeSpent" value="57119000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+    <frame x="-8" y="-8" width="1936" height="1056" extended-state="7" />
     <editor active="true" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.19296375" />
