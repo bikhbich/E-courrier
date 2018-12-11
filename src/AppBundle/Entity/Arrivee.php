@@ -27,14 +27,14 @@ class Arrivee
     /**
      * @var string
      *
-     * @ORM\Column(name="RefArrivee", type="string", length=255, unique=true)
+     * @ORM\Column(name="RefArrivee", type="string", length=255,  nullable=True)
      */
     private $refArrivee;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="RefCourrier", type="string", length=255, unique=true)
+     * @ORM\Column(name="RefCourrier", type="string", length=255 , nullable=True)
      */
     private $refCourrier;
 
@@ -81,7 +81,7 @@ class Arrivee
     protected $expediteur;
 
     /**
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="string",  nullable=True)
      *
      * @Assert\NotBlank(message="Merci de sélectionner votre fichier.")
      * @Assert\File(mimeTypes={ "image/png","image/jpeg","image/jpg","image/gif","application/pdf","application/x-pdf","application/x-msword","application/vnd.ms-word","application/msword" })

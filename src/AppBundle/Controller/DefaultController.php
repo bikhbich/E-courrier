@@ -75,8 +75,8 @@ class DefaultController extends Controller
             return $this->redirectToRoute('ListeArrivee');
         }
 
-        $lastArrivee = $em->getRepository('AppBundle:Arrivee')->findOneBy(array(), array('id' => 'DESC'));
-        var_dump($lastArrivee->getId());die;
+        // $lastArrivee = $em->getRepository('AppBundle:Arrivee')->findOneBy(array(), array('id' => 'DESC'));
+        // var_dump($lastArrivee->getId());die;
         return $this->render('Arrivees/ajouterArrivee.html.twig', [
             'formArrivee' => $formArrivee->createView(),
         ]);

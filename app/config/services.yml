@@ -2,7 +2,7 @@
 # http://symfony.com/doc/current/book/service_container.html
 parameters:
 #    parameter_name: value
-    brochures_directory: '%kernel.project_dir%/public/uploads/files'
+    brochures_directory: '%kernel.project_dir%/publique/uploads/files'
 
 services:
     # default configuration for services in *this* file
