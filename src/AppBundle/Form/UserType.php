@@ -18,7 +18,8 @@ class UserType extends AbstractType
         $builder
             ->add('Nom', TextType::class)
             ->add('Email', EmailType::class)
-            ->add('Role', ChoiceType::class, array('choices' => array('Utilisateur' => 'ROLE_USER', 'Directeur' =>'ROLE_DIRECTEUR', 'Chef division' => 'ROLE_DIVISION' , "Bureau d'ordre" => 'ROLE_BUREAU_ORDRE'), 'multiple'=> false))
+            ->add('Role', ChoiceType::class, array('choices' => array('Directeur' =>'ROLE_DIRECTEUR', 'Chef division' => 'ROLE_DIVISION' , 'Chef service' => 'ROLE_SERVICE', "Bureau d'ordre" => 'ROLE_BUREAU_ORDRE', 'Agent' => 'ROLE_AGENT'), 'multiple'=> false))
+            ->add('Division', ChoiceType::class, array('choices' => array('DAF' =>'DAF', 'DEP' => 'DEP' , 'DPP' => 'DPP'), 'multiple'=> false))
             ->add('plainPassword', RepeatedType::class, [
                 'type' => PasswordType::class,
                 'first_options' => ['label' => 'Mot de passe'],
@@ -33,3 +34,4 @@ class UserType extends AbstractType
         ]);
     }
 }
+

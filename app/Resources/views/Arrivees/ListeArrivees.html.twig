@@ -1,0 +1,66 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion courrier : Liste Arrivées{% endblock %}
+
+{% block body %}
+    {% block menu_top %}
+        {% include 'menu.html.twig' %}
+    {% endblock %}
+
+
+
+<div class="container">
+<br><br>
+   <table id="ListeArrivees" class="table table-striped table-bordered" style="width:100%">
+        <thead>
+            <tr>
+                <th>Réfence</th>
+                <th>Réf courrier</th>
+                <th>Type</th>
+                <th>Date courrier</th>
+                <th>Date arrivée</th>
+                <th>Date creation</th>
+                <th>Expediteur</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% if arrivees is defined %}
+        
+            {% for arrivee in arrivees %}
+                <tr>
+                    <td>{{ arrivee.RefArrivee }}</td>
+                    <td>{{ arrivee.RefCourrier }}</td>
+                    <td>{{ arrivee.Type }}</td>
+                    <td>{{ arrivee.DateCourrier|date("d/m/Y") }}</td>
+                    <td>{{ arrivee.DateArrivee|date("d/m/Y") }}</td>
+                    <td>{{ arrivee.DateCreation|date("d/m/Y") }}</td>
+                    <td>{{ arrivee.Expediteur.Expediteur }}</td>
+                </tr>
+            {% endfor %}
+        {% endif %}
+        </tbody>
+    </table>
+</div>
+   
+
+
+   
+
+
+
+{% endblock %}
+
+
+
+
+{% block javascripts %}
+    <script type="text/javascript">
+       $(document).ready(function()  { 
+           $('#ListeArrivees').DataTable({
+                    "language": {
+                        "url": "{{ asset('js/French.json') }}"
+                    }
+            });
+       ;} );
+    </script>
+{% endblock %}

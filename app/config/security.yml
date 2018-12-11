@@ -22,5 +22,5 @@ security:
     - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
     - { path: ^/register, roles: IS_AUTHENTICATED_ANONYMOUSLY }
     - { path: ^/api, roles: ROLE_API_USER }
-    - { path: ^/, roles: [ROLE_USER, ROLE_DIVISION,ROLE_DIRECTEUR,ROLE_BUREAU_ORDRE] }
+    - { path: ^/, roles: [ ROLE_DIRECTEUR,ROLE_DIVISION,ROLE_SERVICE,ROLE_BUREAU_ORDRE,ROLE_AGENT] }
 

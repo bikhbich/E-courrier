@@ -1,12 +1,9 @@
 
 
 
-{% extends 'base.html.twig' %}
-
 
 
 {% block body %}
-
 
 <nav class="navbar navbar-default">
     <div class="container-fluid">
@@ -25,7 +22,17 @@
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
                 <li class="active"><a href="{{ path('home') }}">Accueil <span class="sr-only">(current)</span></a></li>
-                <li><a href="{{ path('addarrivee') }}">Arrivés</a></li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Arrives <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{{ path('ListeArrivee') }}">Liste des arriviées</a></li>
+                        <li><a href="{{ path('addarrivee') }}">Ajouter un arrivée</a></li>
+                        <li role="separator" class="divider"></li>
+                        <li><a href="#">Auters</a></li>
+                        <li role="separator" class="divider"></li>
+                        <li><a href="#">Statistiques</a></li>
+                    </ul>
+                </li>
                 <li><a href="#">Départs</a></li>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>

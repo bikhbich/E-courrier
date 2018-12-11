@@ -35,6 +35,12 @@ class User implements UserInterface
     protected $Role;
 
     /**
+     * @ORM\Column(type="string", length=50)
+     */
+    protected $Division;
+
+
+    /**
      * @Assert\Length(max=4096)
      */
     protected $plainPassword;
@@ -117,5 +123,29 @@ class User implements UserInterface
     public function getSalt()
     {
         return null;
+    }
+
+    /**
+     * Set division
+     *
+     * @param string $division
+     *
+     * @return User
+     */
+    public function setDivision($division)
+    {
+        $this->Division = $division;
+
+        return $this;
+    }
+
+    /**
+     * Get division
+     *
+     * @return string
+     */
+    public function getDivision()
+    {
+        return $this->Division;
     }
 }
