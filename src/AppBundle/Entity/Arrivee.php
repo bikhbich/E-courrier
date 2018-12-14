@@ -54,23 +54,23 @@ class Arrivee
     private $objet;
 
     /**
-     * @var \DateTime
+     * @var \Date
      *
-     * @ORM\Column(name="DateCourrier", type="datetime")
+     * @ORM\Column(name="DateCourrier", type="date")
      */
     private $dateCourrier;
 
     /**
-     * @var \DateTime
+     * @var \Date
      *
-     * @ORM\Column(name="DateArrivee", type="datetime")
+     * @ORM\Column(name="DateArrivee", type="date")
      */
     private $dateArrivee;
 
     /**
-     * @var \DateTime
+     * @var \Date
      *
-     * @ORM\Column(name="DateCreation", type="datetime")
+     * @ORM\Column(name="DateCreation", type="date")
      */
     private $dateCreation;
 
@@ -81,12 +81,19 @@ class Arrivee
     protected $expediteur;
 
     /**
-     * @ORM\Column(type="string",  nullable=True)
+     * @ORM\Column(type="string" ,  nullable=True)
      *
      * @Assert\NotBlank(message="Merci de sélectionner votre fichier.")
      * @Assert\File(mimeTypes={ "image/png","image/jpeg","image/jpg","image/gif","application/pdf","application/x-pdf","application/x-msword","application/vnd.ms-word","application/msword" })
      */
     protected $fichier;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="Statut", type="integer")
+     */
+    protected $statut;
 
     /**
      * Get id
@@ -328,5 +335,29 @@ class Arrivee
     public function getFichier()
     {
         return $this->fichier;
+    }
+
+    /**
+     * Set statut
+     *
+     * @param integer $statut
+     *
+     * @return Arrivee
+     */
+    public function setStatut($statut)
+    {
+        $this->statut = $statut;
+
+        return $this;
+    }
+
+    /**
+     * Get statut
+     *
+     * @return integer
+     */
+    public function getStatut()
+    {
+        return $this->statut;
     }
 }

@@ -8,7 +8,7 @@
     {% endblock %}
 
 
-
+<input id="arriveId" name="arriveId" type="hidden" value="">
 <div class="container">
 <br><br>
    <table id="ListeArrivees" class="table table-striped table-bordered" style="width:100%">
@@ -21,6 +21,7 @@
                 <th>Date arrivée</th>
                 <th>Date creation</th>
                 <th>Expediteur</th>
+                <th>Fichier</th>
             </tr>
         </thead>
         <tbody>
@@ -35,16 +36,167 @@
                     <td>{{ arrivee.DateArrivee|date("d/m/Y") }}</td>
                     <td>{{ arrivee.DateCreation|date("d/m/Y") }}</td>
                     <td>{{ arrivee.Expediteur.Expediteur }}</td>
+                    <td> 
+                        
+
+
+                        <div class="btn-group" role="group" aria-label="...">
+                            <button onclick="afficherArrivee({{arrivee.id}},'Edit')" type="button" class="btn btn-info" data-toggle="modal" data-target="#EditCourrier"><i class="glyphicon glyphicon-search">
+                                </i></button>
+                            <button onclick="afficherArrivee({{arrivee.id}},'Modif')" type="button" class="btn btn-default" data-toggle="modal" data-target="#EditCourrier" ><i class="glyphicon glyphicon-pencil" >
+                                </i></button>
+                            <button   onclick="document.getElementById('arriveId').value={{arrivee.id}};"  type="button" class="btn btn-danger" data-toggle="modal" href="#ConfirmationSupp" ><i class="glyphicon glyphicon-trash">
+                                </i></button>
+                                {% if arrivee.Fichier is not null %}
+                    
+                                   &nbsp; <a href="{{ asset('publique/uploads/files/' ~ arrivee.Fichier) }}" target="_blank"><img src="{{ asset('images/Open-file-icon.ico') }}" /></a>
+
+                                {% endif %}
+                        </div>
+                        
+                        
+                    
+                    </td>
                 </tr>
             {% endfor %}
         {% endif %}
         </tbody>
     </table>
 </div>
+
+<!--  Modal Confirmation Suppression-->
+<div class="modal fade" id="ConfirmationSupp">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">x</button>
+                <h4 class="modal-title">Confirmation</h4>
+            </div>
+            <div class="modal-body">
+                Etes-vous sur de vouloir supprimer ce courrier !
+            </div>
+            <div class="modal-footer">
+                <button onclick="DeleteArrivee()" class="btn btn-info" data-dismiss="modal" >OUI</button>
+                <button class="btn btn-info" data-dismiss="modal">NON</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--  Modal Edit Courrier-->
    
+<div class="modal fade bd-example-modal-lg" id="EditCourrier" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Edit Arrivée</h5>
+       
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form action="{{ path('ModifArrivee') }}" method="POST">
+      <div class="modal-body">
+
+        <input id="IdArrivee" name="IdArrivee" type="hidden" value="">
+        <fieldset id="fsetCourrier" class="col-md-6">
+            <legend>Courrier</legend>
+
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label for="RefCourrier" >Réf Courrier</label>
+                        <input type="text" id="RefCourrier" name="RefCourrier"  class="form-control" placeholder="Réf Courrier">
+                    </div>
 
 
-   
+                    <div class="form-group">
+                        <label for="Type" >Type</label>
+                        <input type="text" id="Type" name="Type"  class="form-control" placeholder="Type">
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="Objet" >Objet</label>
+                        <textarea id="Objet" name="Objet" required="required" class="form-control" placeholder="Objet" rows="5"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="DateCourrier" >Date Courrier</label>
+                        <div id="datepickerCourrier" class="input-group date" data-date-format="yyyy-mm-dd">
+                        <input type="text" id="DateCourrier" name="DateCourrier"  class="form-control" >
+                        <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+                    </div>
+                </div>
+
+                    <div class="form-group">
+                        <label for="DateArrivee" >Date Arrivée</label>
+                            <div id="datepickerArrivee" class="input-group date" data-date-format="yyyy-mm-dd">
+                                <input type="text" id="DateArrivee" name="DateArrivee"  class="form-control" >
+                                <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+                            </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="DateCreation" >Date Creation</label>
+                            <div id="datepickerCreation" class="input-group date" data-date-format="yyyy-mm-dd">
+                                <input type="text" id="DateCreation" name="DateCreation" disabled="disabled" class="form-control" >
+                                <span class="input-group-addon"><i class="glyphicon glyphicon-calendar" disabled></i></span>
+                            </div>
+                    </div>
+
+
+                </div>
+
+
+        </div>
+
+        </fieldset>
+
+
+        <fieldset id="fsetCorresp" class="col-md-6">
+            <legend>Coordonnées Expéditeur
+            </legend>
+                <div class="panel panel-default">
+                    <div class="panel-body">
+
+
+
+                        <div class="form-group">
+                            <label for="Expediteur" >Expéditeur</label>
+                            <input type="text" id="Expediteur" name="Expediteur" required="required" class="form-control" placeholder="Expéditeur">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="Tel" >Tél</label>
+                            <input type="text" id="Tel" name="Tel" required="required" class="form-control" placeholder="Tél">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="Fax" >Fax</label>
+                            <input type="text" id="Fax" name="Fax" required="required" class="form-control" placeholder="Fax">
+                        </div>
+                    </div>
+                    
+                </div>
+                                    
+        </fieldset> 
+     
+      </div>
+     
+      <div class="modal-footer">
+      
+        <button id="BtnFermer" type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+        <button id="BtnEnregistrer" type="submit"   class="btn btn-primary">Enregistrer</button>
+      </div>
+     </form>
+    </div>
+  </div>
+</div>
+
+
+
+
 
 
 
@@ -62,5 +214,107 @@
                     }
             });
        ;} );
+
+       function DeleteArrivee(){
+           var route="{{ path('DeleteArrivee',{'id': 'IdArrivee'}) }}";
+           var idArrivee = document.getElementById('arriveId').value;
+           route=route.replace('IdArrivee',idArrivee)
+           window.location.href=route;
+       }
+       function ModifArrivee(){
+           var route="{{ path('ModifArrivee') }}";
+           var idArrivee = document.getElementById('arriveId').value;
+           route=route.replace('IdArrivee',idArrivee)
+           window.location.href=route;
+       }
+       
+
+        $(function () {
+            $("#datepickerCourrier").datepicker({autoclose: true,todayHighlight: true}).datepicker();
+            $("#datepickerArrivee").datepicker({autoclose: true,todayHighlight: true}).datepicker();
+        });
+
+        function afficherArrivee($IdArrivee,$action){
+            var Nomfichier ;
+            var urlFichier ;
+            var route="{{ path('AfficherArrivee',{'id': 'IdArrivee'}) }}";
+            route=route.replace('IdArrivee',$IdArrivee)
+           
+        $.ajax({
+            url: route,
+            type: 'GET',
+            dataType: 'json',
+            error:function(XMLHttpRequest, textStatus, errorThrown) {
+                alert(textStatus, errorThrown);
+            },
+            success:function(data, textStatus, XMLHttpRequest) {
+               document.getElementById('IdArrivee').value=data.id;
+               document.getElementById('RefCourrier').value=data.refCourrier;
+               document.getElementById('Type').value=data.type;
+               document.getElementById('Objet').value=data.objet;
+               document.getElementById('DateCourrier').value=format(new Date(data.dateCourrier.timestamp*1000), 'yyyy-MM-dd');
+               document.getElementById('DateArrivee').value=format(new Date(data.dateArrivee.timestamp*1000), 'yyyy-MM-dd');
+               document.getElementById('DateCreation').value=format(new Date(data.dateCreation.timestamp*1000), 'yyyy-MM-dd');
+               document.getElementById('Expediteur').value=data.expediteur.expediteur;
+               document.getElementById('Tel').value=data.expediteur.tel;
+               document.getElementById('Fax').value=data.expediteur.fax;
+               Nomfichier = 'publique/uploads/files/';
+               urlFichier = Nomfichier.concat( data.fichier );
+              // document.getElementById('form_arrivee_Fichier').value=urlFichier;
+              if ($action=='Edit'){
+                  
+               document.getElementById('BtnFermer').style.display="none";
+               document.getElementById('BtnEnregistrer').style.display="none";
+               document.getElementById('RefCourrier').disabled=true;
+               document.getElementById('Type').disabled=true;
+               document.getElementById('Objet').disabled=true;
+               document.getElementById('DateCourrier').disabled=true;
+               document.getElementById('DateArrivee').disabled=true;
+               document.getElementById('DateCreation').disabled=true;
+               document.getElementById('Expediteur').disabled=true;
+               document.getElementById('Tel').disabled=true;
+               document.getElementById('Fax').disabled=true;
+               
+              }else{
+               document.getElementById('BtnFermer').style.display="";
+               document.getElementById('BtnEnregistrer').style.display="";
+               document.getElementById('RefCourrier').disabled=false;
+               document.getElementById('Type').disabled=false;
+               document.getElementById('Objet').disabled=false;
+               document.getElementById('DateCourrier').disabled=false;
+               document.getElementById('DateArrivee').disabled=false;
+               document.getElementById('DateCreation').disabled=true;
+               document.getElementById('Expediteur').disabled=false;
+               document.getElementById('Tel').disabled=false;
+               document.getElementById('Fax').disabled=false;
+
+              }
+
+              
+
+            }
+        });
+    }
+
+    
+
+
+        format = function date2str(x, y) {
+                var z = {
+                        M: x.getMonth() + 1,
+                        d: x.getDate(),
+                        h: x.getHours(),
+                        m: x.getMinutes(),
+                        s: x.getSeconds()
+                        };
+                y = y.replace(/(M+|d+|h+|m+|s+)/g, function(v) {
+                    return ((v.length > 1 ? "0" : "") + eval('z.' + v.slice(-1))).slice(-2)
+                });
+
+                return y.replace(/(y+)/g, function(v) {
+                    return x.getFullYear().toString().slice(-v.length)
+                });
+        }   
+       
     </script>
 {% endblock %}

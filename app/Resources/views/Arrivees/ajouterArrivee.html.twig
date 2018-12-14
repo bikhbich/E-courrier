@@ -13,7 +13,7 @@
 
 
 
-                            <div class="panel panel-default">
+    <div class="panel panel-default">
 
                                 <div class="panel-heading">Ajout/Modif Arrivée</div>
                                 {{ form_start(formArrivee) }}
@@ -118,7 +118,7 @@
                                                                 <span class="glyphicon glyphicon-folder-open"></span>
                                                                 <span class="image-preview-input-title">Parcourir</span>
                                                                  <!-- <input type="file" accept="image/png, image/jpeg, image/gif" name="input-file-preview"/> rename it -->
-                                                                {{ form_widget(formArrivee.Fichier, {'attr': {'class': 'form-control'}}) }}
+                                                                {{ form_widget(formArrivee.Fichier, {'attr': {'class': 'form-control',id:'FichierUp',name:'FichierUp'}}) }}
                                                             </div>
                                                          </span>
                                                 </div>

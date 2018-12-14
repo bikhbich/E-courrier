@@ -24,7 +24,7 @@ class FormArrivee extends AbstractType
             ->add('DateCourrier', DateTimeType::class, array('widget' => 'single_text','format' => 'yyyy-MM-dd','label' => false,'html5' => false, ))
             ->add('DateArrivee', DateTimeType::class, array('widget' => 'single_text','format' => 'yyyy-MM-dd','label' => false,'html5' => false, ))
             ->add('DateCreation', DateTimeType::class, array('widget' => 'single_text','format' => 'yyyy-MM-dd' ,'data' => new \DateTime("now"),'label' => false,'html5' => false, ))
-            ->add('Fichier', FileType::class, array('label' => 'Fichier (PDF)','required' => false))
+            ->add('Fichier', FileType::class, array('label' => 'Fichier (PDF)','required' => true))
 
            ;
     }
