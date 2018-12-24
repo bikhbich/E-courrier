@@ -15,6 +15,11 @@ use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Serializer\Encoder\XmlEncoder;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use AppBundle\Entity\Departements;
+use AppBundle\Entity\Profils;
+use AppBundle\Entity\Controles;
+use AppBundle\Entity\Actions;
+use Symfony\Component\Validator\Constraints\NotNull;
 
 class DefaultController extends Controller
 {
@@ -89,6 +94,100 @@ class DefaultController extends Controller
             'formArrivee' => $formArrivee->createView(),
         ]);
     }
+
+
+
+     /**
+     * @Route("/paramarrivee/{id}/", name="paramarrivee")
+     */
+    public function paramarriveeAction(Request $request, $id)
+    {
+        
+       
+        $em = $this->getDoctrine()->getManager();
+        $repository = $em->getRepository('AppBundle:Arrivee');
+        $arrivee = $repository->find($id);
+        $departements = $em->getRepository('AppBundle:Departements')->findAll();
+        $controles = $em->getRepository('AppBundle:Controles')->findAll();
+        $repository = $em->getRepository('AppBundle:Actions');
+        $actions = $repository->findBy(array('arrivee'=>$arrivee));
+
+       // var_dump($arrivee->getDepartement()->getId());die;
+
+
+        
+        return $this->render('Arrivees/ParamArrivee.html.twig', array( 'arrivee'=> $arrivee,'departements'=>$departements,'controles'=>$controles ,'actions'=>$actions));
+    }
+
+     /**
+     * @Route("/Nextarrivee", name="Nextarrivee")
+     */
+    public function NextarriveeAction(Request $request)
+    {
+        
+        // modif arrivee
+        $em = $this->getDoctrine()->getManager();
+        $IdArrivee=$request->get('IdArrivee');
+        $em = $this->getDoctrine()->getManager();
+        $repository = $em->getRepository('AppBundle:Arrivee');
+        $arrivee = $repository->find($IdArrivee);
+        $IdExpediteur=$arrivee->getExpediteur()->getId();
+        $repository = $em->getRepository('AppBundle:Expediteurs');
+        $expediteur = $repository->find($IdExpediteur);
+        $expediteur->setExpediteur($request->get('Expediteur'));
+        $expediteur->setTel($request->get('Tel'));
+        $expediteur->setFax($request->get('Fax'));
+        $arrivee->setRefCourrier($request->get('RefCourrier'));
+        $arrivee->setType($request->get('Type'));
+        $arrivee->setObjet($request->get('Objet'));
+        $dateCourrier = new \DateTime($request->get('DateCourrier'));
+        $dateArrivee = new \DateTime($request->get('DateArrivee'));
+        $arrivee->setDateCourrier($dateCourrier);
+        $arrivee->setDateArrivee($dateArrivee);
+        $arrivee->setStatut(1);
+        $repository = $em->getRepository('AppBundle:Departements');
+        $departement = $repository->find($request->get('Departement'));
+        $arrivee->setDepartement($departement);
+        $em->flush();
+
+        //  retenir les actions
+        $controles = $em->getRepository('AppBundle:Controles')->findAll();
+
+        foreach($controles as $controle)
+                    {
+                        
+                        $repository = $em->getRepository('AppBundle:Actions');
+                        
+                        $action = $repository->findOneBy(array('arrivee'=>$arrivee,'controle'=>$controle));
+                       
+                        if ($action ){
+                            $action->setControle($controle);
+                            $action->setValue($request->get('controle_'.$controle->getId()));
+                            $action->setArrivee($arrivee);
+                            
+                            $em->flush();
+
+                        }else{
+                            $Newaction = new Actions();
+                            $Newaction->setControle($controle);
+                            $Newaction->setValue($request->get('controle_'.$controle->getId()));
+                            $Newaction->setArrivee($arrivee);
+                            
+                            $em->persist($Newaction);
+                            $em->flush();
+
+                        }
+                        
+                        
+
+
+                       
+                    }
+      
+        return $this->redirectToRoute('ListeArrivee');
+        
+    }
+
     /**
      * @return string
      */
@@ -186,4 +285,313 @@ class DefaultController extends Controller
 
           
     }
+
+
+     /**
+     * @Route("/ListeDepartements", name="ListeDepartements")
+     */
+    public function ListeDepartementsAction(Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $departements = $em->getRepository('AppBundle:Departements')->findAll();
+        return $this->render('Parametres/ListeDepartements.html.twig', array( 'departements'=> $departements ));
+    }
+
+    
+
+    /**
+     * @Route("/AddDepartement", name="AddDepartement")
+     */
+
+    public function AddDepartementAction( Request $request)
+    {
+        
+        
+        $em = $this->getDoctrine()->getManager();
+        $departement = new Departements();
+        $departement->setDepartement($request->get('Departement'));
+        $departement->setDescription($request->get('Description'));
+        $departement->setType($request->get('Type'));
+        
+        $em->persist($departement);
+        $em->flush();
+      
+        return $this->redirectToRoute('ListeDepartements');
+
+          
+    }
+
+    /**
+     * @Route("/AfficherDepartement/{id}/", name="AfficherDepartement")
+     * @Method("GET")
+     */
+
+    public function AfficherDepartementAction(Request $request, $id)
+    {
+      $em = $this->getDoctrine()->getManager();
+      $repository = $em->getRepository('AppBundle:Departements');
+      $departement = $repository->find($id);
+     
+          $encoders = array( new JsonEncoder());
+          $normalizers = array(new ObjectNormalizer());
+
+          $serializer = new Serializer($normalizers, $encoders);
+
+          $jsonContent = $serializer->serialize($departement, 'json');
+          return new Response($jsonContent);
+
+          
+    }
+
+     /**
+     * @Route("/ModifDepartement", name="ModifDepartement")
+     */
+
+    public function ModifDepartementAction( Request $request)
+    {
+        
+        
+        $IdDepartement=$request->get('IdDepartement');
+        $em = $this->getDoctrine()->getManager();
+        $repository = $em->getRepository('AppBundle:Departements');
+        $departement = $repository->find($IdDepartement);
+        $departement->setDepartement($request->get('DepartementModal'));
+        $departement->setDescription($request->get('DescriptionModal'));
+        $departement->setType($request->get('TypeModal'));
+        $em->flush();
+      
+        return $this->redirectToRoute('ListeDepartements');
+
+          
+    }
+
+     /**
+      * @Route("/DeleteDepartement/{id}/", name="DeleteDepartement")
+      */
+
+      public function DeleteDepartementAction(Request $request, $id)
+      {
+          $em = $this->getDoctrine()->getManager();
+          $repository = $em->getRepository('AppBundle:Departements');
+          $departement = $repository->find($id);
+          $repository = $em->getRepository('AppBundle:Profils');
+          $profils = $repository->findBy(array('Departement'=>$departement));
+
+          foreach($profils as $profil)
+                    {
+                        $em->remove($profil);
+                        $em->flush();
+                    }
+
+          $em->remove($departement);
+          $em->flush();
+  
+          return $this->redirectToRoute('ListeDepartements');
+      }
+
+
+
+    /**
+     * @Route("/ListeProfils", name="ListeProfils")
+     */
+    public function ListeProfilsAction(Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $Profils = $em->getRepository('AppBundle:Profils')->findAll();
+        $departements = $em->getRepository('AppBundle:Departements')->findAll();
+        return $this->render('Parametres/ListeProfils.html.twig', array( 'Profils'=> $Profils , 'departements'=> $departements ));
+    }
+
+    
+
+    /**
+     * @Route("/AddProfil", name="AddProfil")
+     */
+
+    public function AddProfilAction( Request $request)
+    {
+        
+        
+        $em = $this->getDoctrine()->getManager();
+        $profil = new Profils();
+        $repository = $em->getRepository('AppBundle:Departements');
+        $departement = $repository->find($request->get('Departement'));
+        $profil->setProfil($request->get('Profil'));
+        $profil->setNiveau($request->get('Niveau'));
+        $profil->setDepartement($departement);
+        
+        $em->persist($profil);
+        $em->flush();
+      
+        return $this->redirectToRoute('ListeProfils');
+
+          
+    }
+
+    /**
+     * @Route("/AfficherProfil/{id}/", name="AfficherProfil")
+     * @Method("GET")
+     */
+
+    public function AfficherProfilAction(Request $request, $id)
+    {
+      $em = $this->getDoctrine()->getManager();
+      $repository = $em->getRepository('AppBundle:Profils');
+      $profil = $repository->find($id);
+     
+          $encoders = array( new JsonEncoder());
+          $normalizers = array(new ObjectNormalizer());
+
+          $serializer = new Serializer($normalizers, $encoders);
+
+          $jsonContent = $serializer->serialize($profil, 'json');
+          return new Response($jsonContent);
+
+          
+    }
+
+     /**
+     * @Route("/ModifProfil", name="ModifProfil")
+     */
+
+    public function ModifProfilAction( Request $request)
+    {
+        
+        
+        $IdProfil=$request->get('IdProfil');
+        $em = $this->getDoctrine()->getManager();
+        $repository = $em->getRepository('AppBundle:Profils');
+        $profil = $repository->find($IdProfil);
+        $profil->setProfil($request->get('ProfilModal'));
+        $profil->setNiveau($request->get('NiveauModal'));
+        $repository = $em->getRepository('AppBundle:Departements');
+        $departement = $repository->find($request->get('DepartementModal'));
+        $profil->setDepartement($departement);
+        $em->flush();
+      
+        return $this->redirectToRoute('ListeProfils');
+
+          
+    }
+
+     /**
+      * @Route("/DeleteProfil/{id}/", name="DeleteProfil")
+      */
+
+      public function DeleteProfilAction(Request $request, $id)
+      {
+          $em = $this->getDoctrine()->getManager();
+          $repository = $em->getRepository('AppBundle:Profils');
+          $profil = $repository->find($id);
+          $em->remove($profil);
+          $em->flush();
+  
+          return $this->redirectToRoute('ListeProfils');
+      }
+
+
+    /**
+     * @Route("/ListeControles", name="ListeControles")
+     */
+    public function ListeControlesAction(Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $Controles = $em->getRepository('AppBundle:Controles')->findAll();
+        return $this->render('Parametres/ListeControles.html.twig', array( 'Controles'=> $Controles ));
+    }
+
+    
+
+    /**
+     * @Route("/AddControle", name="AddControle")
+     */
+
+    public function AddControleAction( Request $request)
+    {
+        
+        $em = $this->getDoctrine()->getManager();
+        $Controle = new Controles();
+        $Controle->setLabel($request->get('Label'));
+        $Controle->setType($request->get('Type'));
+        
+        $em->persist($Controle);
+        $em->flush();
+      
+        return $this->redirectToRoute('ListeControles');
+
+          
+    }
+
+    /**
+     * @Route("/AfficherControle/{id}/", name="AfficherControle")
+     * @Method("GET")
+     */
+
+    public function AfficherControlAction(Request $request, $id)
+    {
+      $em = $this->getDoctrine()->getManager();
+      $repository = $em->getRepository('AppBundle:Controles');
+      $Control = $repository->find($id);
+     
+          $encoders = array( new JsonEncoder());
+          $normalizers = array(new ObjectNormalizer());
+
+          $serializer = new Serializer($normalizers, $encoders);
+
+          $jsonContent = $serializer->serialize($Control, 'json');
+          return new Response($jsonContent);
+
+          
+    }
+
+     /**
+     * @Route("/ModifControle", name="ModifControle")
+     */
+
+    public function ModifControlAction( Request $request)
+    {
+        
+        
+        $IdControl=$request->get('IdControle');
+        $em = $this->getDoctrine()->getManager();
+        $repository = $em->getRepository('AppBundle:Controles');
+        $controle = $repository->find($IdControl);
+        $controle->setLabel($request->get('LabelModal'));
+        $controle->setType($request->get('TypeModal'));
+        $em->flush();
+      
+        return $this->redirectToRoute('ListeControles');
+
+          
+    }
+
+     /**
+      * @Route("/DeleteControle/{id}/", name="DeleteControle")
+      */
+
+      public function DeleteControlAction(Request $request, $id)
+      {
+          $em = $this->getDoctrine()->getManager();
+          $repository = $em->getRepository('AppBundle:Controles');
+          $contole = $repository->find($id);
+
+          $repository = $em->getRepository('AppBundle:Actions');
+          $actions = $repository->findBy(array('controle'=>$contole));
+
+          foreach($actions as $action)
+                    {
+                        $em->remove($action);
+                        $em->flush();
+                    }
+          $em->remove($contole);
+          $em->flush();
+  
+          return $this->redirectToRoute('ListeControles');
+      }
+
+
+    
+
+
+    
 }

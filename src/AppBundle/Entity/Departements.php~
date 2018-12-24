@@ -29,6 +29,13 @@ class Departements
     private $departement;
 
     /**
+     * @var integer
+     *
+     * @ORM\Column(name="Type", type="integer")
+     */
+    private $type;
+
+    /**
      * @var string
      *
      * @ORM\Column(name="Description", type="text")
@@ -68,5 +75,29 @@ class Departements
     public function getDepartement()
     {
         return $this->departement;
+    }
+
+    /**
+     * Set description
+     *
+     * @param string $description
+     *
+     * @return Departements
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    /**
+     * Get description
+     *
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
     }
 }

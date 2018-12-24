@@ -34,6 +34,13 @@ class Profils
      */
     protected $Departement;
 
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="Niveau", type="integer")
+     */
+    protected $niveau;
+
 
     /**
      * Get id
@@ -91,5 +98,29 @@ class Profils
     public function getDepartement()
     {
         return $this->Departement;
+    }
+
+    /**
+     * Set niveau
+     *
+     * @param integer $niveau
+     *
+     * @return Profils
+     */
+    public function setNiveau($niveau)
+    {
+        $this->niveau = $niveau;
+
+        return $this;
+    }
+
+    /**
+     * Get niveau
+     *
+     * @return integer
+     */
+    public function getNiveau()
+    {
+        return $this->niveau;
     }
 }

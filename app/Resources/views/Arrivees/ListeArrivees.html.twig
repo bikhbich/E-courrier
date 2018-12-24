@@ -21,7 +21,7 @@
                 <th>Date arrivée</th>
                 <th>Date creation</th>
                 <th>Expediteur</th>
-                <th>Fichier</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -41,12 +41,15 @@
 
 
                         <div class="btn-group" role="group" aria-label="...">
+                            <button onclick="paramArrivee({{arrivee.id}})" type="button" class="btn icon-btn btn-warning"  ><i class="glyphicon glyphicon-cog" >
+                                </i></button>
                             <button onclick="afficherArrivee({{arrivee.id}},'Edit')" type="button" class="btn btn-info" data-toggle="modal" data-target="#EditCourrier"><i class="glyphicon glyphicon-search">
                                 </i></button>
                             <button onclick="afficherArrivee({{arrivee.id}},'Modif')" type="button" class="btn btn-default" data-toggle="modal" data-target="#EditCourrier" ><i class="glyphicon glyphicon-pencil" >
                                 </i></button>
                             <button   onclick="document.getElementById('arriveId').value={{arrivee.id}};"  type="button" class="btn btn-danger" data-toggle="modal" href="#ConfirmationSupp" ><i class="glyphicon glyphicon-trash">
                                 </i></button>
+                            
                                 {% if arrivee.Fichier is not null %}
                     
                                    &nbsp; <a href="{{ asset('publique/uploads/files/' ~ arrivee.Fichier) }}" target="_blank"><img src="{{ asset('images/Open-file-icon.ico') }}" /></a>
@@ -224,8 +227,12 @@
        function ModifArrivee(){
            var route="{{ path('ModifArrivee') }}";
            var idArrivee = document.getElementById('arriveId').value;
-           route=route.replace('IdArrivee',idArrivee)
            window.location.href=route;
+       }
+       function paramArrivee($id){
+           var route="{{ path('paramarrivee',{'id': 'IdArrivee'}) }}";
+            route=route.replace('IdArrivee',$id);
+           location.href=route;
        }
        
 

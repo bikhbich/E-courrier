@@ -1,0 +1,228 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion courrier : Paramètrer Arrivée{% endblock %}
+
+{% block body %}
+    {% block menu_top %}
+        {% include 'menu.html.twig' %}
+    {% endblock %}
+
+
+    <div class="container">
+        <br>
+
+
+
+    <div class="panel panel-default">
+        {% if arrivee is defined %}
+        <form action="{{ path('Nextarrivee') }}" method="POST">
+        <input id="IdArrivee" name="IdArrivee" type="hidden" value="{{arrivee.id}}">
+                                <div class="panel-heading">Paramètrer Arrivée</div>
+
+                                <div class="panel-body">
+                
+
+
+                
+                                    <fieldset id="fsetCourrier" class="col-md-6">
+                                        <legend>Courrier</legend>
+
+                                        <div class="panel panel-default">
+                                            <div class="panel-body">
+
+                                                <div class="form-group">
+                                                    <label for="RefCourrier" >Réf Courrier</label>
+                                                    <input type="text" id="RefCourrier" name="RefCourrier" value="{{arrivee.refCourrier}}"  class="form-control" placeholder="RefCourrier">
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label for="Type" >Type</label>
+                                                    <input type="text" id="Type" name="Type" value="{{arrivee.type}}"   class="form-control" placeholder="Type">
+                                                </div>
+
+
+                                                <div class="form-group">
+                                                    <label for="Type" >Objet</label>
+                                                    <textarea  id="Objet" name="Objet"   class="form-control" placeholder="Objet" rows="5">{{arrivee.objet}}</textarea>
+                                                </div>
+
+
+                                                <div class="form-group">
+                                                    <label for="DateCourrier" >Date Courrier</label>
+                                                    <div id="datepickerCourrier" class="input-group date" data-date-format="yyyy-mm-dd">
+                                                        <input type="text" id="DateCourrier" name="DateCourrier" value="{{arrivee.dateCourrier|date("Y-m-d")}}"   class="form-control">
+                                                        <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="DateArrivee" >Date Arrivée</label>
+                                                    <div id="datepickerArrivee" class="input-group date" data-date-format="yyyy-mm-dd">
+                                                        <input type="text" id="DateArrivee" name="DateArrivee" value="{{arrivee.dateArrivee|date("Y-m-d")}}"   class="form-control">
+                                                        <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+                                                    </div>
+                                                </div>
+
+                                                
+
+
+
+                                                <div class="form-group">
+                                                    <label for="DateCreation" >Date Creation</label>
+                                                    <div id="datepickerCreation" class="input-group date" data-date-format="yyyy-mm-dd">
+                                                    <input type="text" id="DateCreation" name="DateCreation" value="{{arrivee.dateCreation|date("Y-m-d")}}"  disabled="disabled" class="form-control">
+                                                        <span class="input-group-addon"><i class="glyphicon glyphicon-calendar" disabled></i></span>
+                                                    </div>
+                                                </div>
+
+
+                                            </div>
+
+
+                                        </div>
+
+                                    </fieldset>
+
+
+                                    
+
+
+                                     <fieldset id="fsetCorresp" class="col-md-6">
+                                        <legend>Direction</legend>
+                                        <div class="panel panel-default">
+                                            <div class="panel-body">
+
+
+                                                <div class="form-group">
+                                                    <label for="Departement">Département</label>
+                                                    <select class="form-control" id="Departement" name="Departement" >
+                                                    {% if departements is defined %}
+                                                            {% for departement in departements %}
+                                                                {% if arrivee.departement != null  %}
+                                                                    {% if departement.id == arrivee.departement.id %}
+                                                                        <option value={{departement.id}} selected>{{departement.departement}}</option>
+                                                                        {% else %}
+                                                                        <option value={{departement.id}} >{{departement.departement}}</option>
+                                                                    {% endif %}
+                                                                    {% else %}
+                                                                    <option value={{departement.id}} >{{departement.departement}}</option>
+                                                                {% endif %}
+                                                                
+                                                            {% endfor %}
+                                                    {% endif %}   
+                                                    </select>
+                                                </div>
+                                                
+
+                                                {% if controles is defined %}
+                                                            {% for controle in controles %}
+                                                            {% set valeurAction = null %}
+                                                                {% if controles is defined %}
+                                                                    {% for action in actions %}
+                                                                      {% if action.controle == controle %}
+                                                                        {% set valeurAction = action.value %}
+                                                                        
+                                                                      {% endif %}
+
+                                                                    {% endfor %}
+                                                                {% endif %} 
+                                                            {% if controle.type == "checkbox" %}
+                                                                
+                                                                <div class="checkbox">
+                                                                    {% if  valeurAction is null or valeurAction == 'off' %}
+                                                                        <label><input type="{{controle.type}}" id="controle_{{controle.id}}" name="controle_{{controle.id}}" >{{controle.label}}</label>
+                                                                    {% elseif valeurAction == '' or valeurAction == 'on' %}
+                                                                        <label><input type="{{controle.type}}" id="controle_{{controle.id}}" name="controle_{{controle.id}}" checked>{{controle.label}}</label>
+                                                                    {% endif %}
+                                                                    
+                                                                </div>
+                                                            {% elseif controle.type == "textarea" %}
+                                                                <div class="form-group">
+                                                                    <label for="controle_{{controle.id}}" >{{controle.label}}</label>
+                                                                    <textarea  id="controle_{{controle.id}}" name="controle_{{controle.id}}"   class="form-control" placeholder="{{controle.label}}" rows="5">{{valeurAction }}</textarea>
+                                                                </div>
+                                                            {% else %}
+                                                                <div class="form-group">
+                                                                    <label for="Fax" >{{controle.label}}</label>
+                                                                    <input type="{{controle.type}}" id="controle_{{controle.id}}" name="controle_{{controle.id}}"  class="form-control" placeholder="{{controle.label}}" value="{{valeurAction }}">
+                                                                </div>
+                                                            {% endif %} 
+                                                            {% endfor %}
+                                                {% endif %} 
+
+
+                                                
+
+                                                
+
+                                            </div>
+                                        </div>
+
+
+
+                                    </fieldset>
+                                    <fieldset id="fsetCorresp" class="col-md-6">
+                                        <legend>Coordonnées Expéditeur</legend>
+                                        <div class="panel panel-default">
+                                            <div class="panel-body">
+
+
+
+                                                <div class="form-group">
+                                                    <label for="Expediteur" >Expéditeur</label>
+                                                    <input type="text" id="Expediteur" name="Expediteur" value="{{arrivee.expediteur.expediteur}}" required="required" class="form-control" placeholder="Expéditeur">
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label for="Tel" >Tél</label>
+                                                    <input type="text" id="Tel" name="Tel" value="{{arrivee.expediteur.tel}}" required="required" class="form-control" placeholder="Tél">
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label for="Fax" >Fax</label>
+                                                    <input type="text" id="Fax" name="Fax" value="{{arrivee.expediteur.fax}}" required="required" class="form-control" placeholder="Fax">
+                                                </div>
+
+
+                                            </div>
+                                        </div>
+
+
+
+                                    </fieldset>
+
+
+
+                                    <div class="form-group">
+                                        <div class="col-md-8 col-md-offset-10" style="float:left;margin-top:10px;">
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="fa fa-btn fa-user"></i> Enregistrer
+                                            </button>
+                                            <button type="button" class="btn btn-secondary" onclick="javascript:history.go(-1)">
+                                                <i class="fa fa-btn fa-user"></i> Annuler
+                                            </button>
+
+                                        </div>
+                                    </div>
+
+
+                                </div>
+
+                            </div>
+
+        </form>
+        {% endif %}
+    </div>
+
+
+
+{% endblock %}
+
+{% block javascripts %}
+    <script type="text/javascript">
+        $(function () {
+            $("#datepickerCourrier").datepicker({autoclose: true,todayHighlight: true}).datepicker('update', new Date());
+            $("#datepickerArrivee").datepicker({autoclose: true,todayHighlight: true}).datepicker('update', new Date());
+        });
+    </script>
+{% endblock %}
+

@@ -34,6 +34,13 @@ class Profils
      */
     protected $Departement;
 
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="Niveau", type="integer")
+     */
+    protected $niveau;
+
 
     /**
      * Get id
@@ -68,5 +75,28 @@ class Profils
     {
         return $this->profil;
     }
-}
 
+    /**
+     * Set departement
+     *
+     * @param \AppBundle\Entity\Departements $departement
+     *
+     * @return Profils
+     */
+    public function setDepartement(\AppBundle\Entity\Departements $departement = null)
+    {
+        $this->Departement = $departement;
+
+        return $this;
+    }
+
+    /**
+     * Get departement
+     *
+     * @return \AppBundle\Entity\Departements
+     */
+    public function getDepartement()
+    {
+        return $this->Departement;
+    }
+}
