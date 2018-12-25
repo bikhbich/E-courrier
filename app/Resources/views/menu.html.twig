@@ -35,12 +35,18 @@
                 </li>
                 <li><a href="#">Départs</a></li>
                 <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Utilisateurs <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{{ path('ListeDepartements') }}">Liste utilisateurs</a></li>
+                        <li><a href="{{ path('ListeProfils') }}">Ajouter utilisateurs</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Paramètres <span class="caret"></span></a>
                     <ul class="dropdown-menu">
                         <li><a href="{{ path('ListeDepartements') }}">Départements</a></li>
                         <li><a href="{{ path('ListeProfils') }}">Profils</a></li>
                         <li><a href="{{ path('ListeControles') }}">Controles</a></li>
-                        <li><a href="#">Personnels</a></li>
                         <li role="separator" class="divider"></li>
                         <li><a href="#">Autres</a></li>
                         <li role="separator" class="divider"></li>

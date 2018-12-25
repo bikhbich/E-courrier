@@ -21,6 +21,16 @@
                         <label for="Departement" >Département</label>
                         <input type="text" id="Departement" name="Departement"  class="form-control" placeholder="Département">
                     </div>
+                    <div class="form-group">
+                        <label for="chef" >Chef de département</label>
+                        <select class="form-control" id="Chef" name="Chef" >
+                            {% if chefs is defined %}
+                                    {% for chef in chefs %}
+                                        <option value={{ chef.id }} >{{ chef.civilite ~ ' ' ~ chef.prenom ~ ' ' ~ chef.nom }}</option>  
+                                    {% endfor %}
+                            {% endif %}  
+                         </select>
+                    </div>
 
                     <div class="form-group">
                         <label for="Type" >Type</label>
@@ -50,6 +60,7 @@
         <thead>
             <tr>
                 <th>Département</th>
+                <th>Chef de département</th>
                 <th>Type</th>
                 <th>Déscription</th>
                 <th>Actions</th>
@@ -61,6 +72,7 @@
             {% for departement in departements %}
                 <tr>
                     <td>{{ departement.Departement }}</td>
+                    <td>{{ departement.chef.civilite ~ ' ' ~ departement.chef.prenom ~ ' ' ~ departement.chef.nom  }}</td>
                     <td>
                     {% if departement.Type == 1 %}
                                 Direction
@@ -136,6 +148,16 @@
                     <div class="form-group">
                         <label for="DepartementModal" >Département</label>
                         <input type="text" id="DepartementModal" name="DepartementModal"  class="form-control" placeholder="Département">
+                    </div>
+                    <div class="form-group">
+                        <label for="chefModal" >Chef de département</label>
+                        <select class="form-control" id="ChefModal" name="ChefModal" >
+                            {% if chefs is defined %}
+                                    {% for chef in chefs %}
+                                        <option value={{ chef.id }} >{{ chef.civilite ~ ' ' ~ chef.prenom ~ ' ' ~ chef.nom }}</option>  
+                                    {% endfor %}
+                            {% endif %}  
+                         </select>
                     </div>
 
                     <div class="form-group">
@@ -222,18 +244,21 @@
                document.getElementById('DepartementModal').value=data.departement;
                document.getElementById('DescriptionModal').value=data.description;
                $("#TypeModal").val(data.type).trigger("change");
+               $("#ChefModal").val(data.chef.id).trigger("change");
               if ($action=='Edit'){
                   
                document.getElementById('BtnEnregistrerModal').style.display="none";
                document.getElementById('DepartementModal').disabled=true;
                document.getElementById('DescriptionModal').disabled=true;
                document.getElementById('TypeModal').disabled=true;
+               document.getElementById('ChefModal').disabled=true;
                
               }else{
                document.getElementById('BtnEnregistrerModal').style.display="";
                document.getElementById('DepartementModal').disabled=false;
                document.getElementById('DescriptionModal').disabled=false;
                document.getElementById('TypeModal').disabled=false;
+               document.getElementById('ChefModal').disabled=false;
 
               }
 

@@ -42,6 +42,12 @@ class Departements
      */
     private $description;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="departement")
+     * @ORM\JoinColumn(name="Chef", referencedColumnName="id")
+     */
+    protected $chef;
+
 
     /**
      * Get id
@@ -123,5 +129,29 @@ class Departements
     public function getType()
     {
         return $this->type;
+    }
+
+    /**
+     * Set chef
+     *
+     * @param \AppBundle\Entity\User $chef
+     *
+     * @return Departements
+     */
+    public function setChef(\AppBundle\Entity\User $chef = null)
+    {
+        $this->chef = $chef;
+
+        return $this;
+    }
+
+    /**
+     * Get chef
+     *
+     * @return \AppBundle\Entity\User
+     */
+    public function getChef()
+    {
+        return $this->chef;
     }
 }

@@ -318,8 +318,51 @@ class User implements UserInterface
         return $this->dateNaissance;
     }
 
-    
+    /**
+     * Set profil
+     *
+     * @param \AppBundle\Entity\Departements $profil
+     *
+     * @return User
+     */
+    public function setProfil(\AppBundle\Entity\Departements $profil = null)
+    {
+        $this->Profil = $profil;
 
-   
+        return $this;
+    }
 
+    /**
+     * Get profil
+     *
+     * @return \AppBundle\Entity\Departements
+     */
+    public function getProfil()
+    {
+        return $this->Profil;
+    }
+
+    /**
+     * Set departement
+     *
+     * @param \AppBundle\Entity\Profils $departement
+     *
+     * @return User
+     */
+    public function setDepartement(\AppBundle\Entity\Profils $departement = null)
+    {
+        $this->Departement = $departement;
+
+        return $this;
+    }
+
+    /**
+     * Get departement
+     *
+     * @return \AppBundle\Entity\Profils
+     */
+    public function getDepartement()
+    {
+        return $this->Departement;
+    }
 }

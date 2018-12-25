@@ -294,7 +294,10 @@ class DefaultController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
         $departements = $em->getRepository('AppBundle:Departements')->findAll();
-        return $this->render('Parametres/ListeDepartements.html.twig', array( 'departements'=> $departements ));
+        //$chefs = $em->getRepository('AppBundle:User')->findBy( array('Role'=>'ROLE_DIVISION'));
+        $chefs = $em->getRepository('AppBundle:User')->findAll();
+        
+        return $this->render('Parametres/ListeDepartements.html.twig', array( 'departements'=> $departements , 'chefs' => $chefs));
     }
 
     
@@ -312,6 +315,8 @@ class DefaultController extends Controller
         $departement->setDepartement($request->get('Departement'));
         $departement->setDescription($request->get('Description'));
         $departement->setType($request->get('Type'));
+        $chef = $em->getRepository('AppBundle:User')->find($request->get('Chef'));
+        $departement->setChef($chef);
         
         $em->persist($departement);
         $em->flush();
@@ -358,6 +363,8 @@ class DefaultController extends Controller
         $departement->setDepartement($request->get('DepartementModal'));
         $departement->setDescription($request->get('DescriptionModal'));
         $departement->setType($request->get('TypeModal'));
+        $chef = $em->getRepository('AppBundle:User')->find($request->get('ChefModal'));
+        $departement->setChef($chef);
         $em->flush();
       
         return $this->redirectToRoute('ListeDepartements');
@@ -374,15 +381,6 @@ class DefaultController extends Controller
           $em = $this->getDoctrine()->getManager();
           $repository = $em->getRepository('AppBundle:Departements');
           $departement = $repository->find($id);
-          $repository = $em->getRepository('AppBundle:Profils');
-          $profils = $repository->findBy(array('Departement'=>$departement));
-
-          foreach($profils as $profil)
-                    {
-                        $em->remove($profil);
-                        $em->flush();
-                    }
-
           $em->remove($departement);
           $em->flush();
   
@@ -398,8 +396,7 @@ class DefaultController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
         $Profils = $em->getRepository('AppBundle:Profils')->findAll();
-        $departements = $em->getRepository('AppBundle:Departements')->findAll();
-        return $this->render('Parametres/ListeProfils.html.twig', array( 'Profils'=> $Profils , 'departements'=> $departements ));
+        return $this->render('Parametres/ListeProfils.html.twig', array( 'Profils'=> $Profils));
     }
 
     
@@ -414,11 +411,8 @@ class DefaultController extends Controller
         
         $em = $this->getDoctrine()->getManager();
         $profil = new Profils();
-        $repository = $em->getRepository('AppBundle:Departements');
-        $departement = $repository->find($request->get('Departement'));
         $profil->setProfil($request->get('Profil'));
         $profil->setNiveau($request->get('Niveau'));
-        $profil->setDepartement($departement);
         
         $em->persist($profil);
         $em->flush();
@@ -464,9 +458,6 @@ class DefaultController extends Controller
         $profil = $repository->find($IdProfil);
         $profil->setProfil($request->get('ProfilModal'));
         $profil->setNiveau($request->get('NiveauModal'));
-        $repository = $em->getRepository('AppBundle:Departements');
-        $departement = $repository->find($request->get('DepartementModal'));
-        $profil->setDepartement($departement);
         $em->flush();
       
         return $this->redirectToRoute('ListeProfils');

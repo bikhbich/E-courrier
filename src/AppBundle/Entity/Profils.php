@@ -29,12 +29,6 @@ class Profils
     private $profil;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Departements", inversedBy="Profils")
-     * @ORM\JoinColumn(name="Departement", referencedColumnName="id")
-     */
-    protected $Departement;
-
-    /**
      * @var integer
      *
      * @ORM\Column(name="Niveau", type="integer")
@@ -74,30 +68,6 @@ class Profils
     public function getProfil()
     {
         return $this->profil;
-    }
-
-    /**
-     * Set departement
-     *
-     * @param \AppBundle\Entity\Departements $departement
-     *
-     * @return Profils
-     */
-    public function setDepartement(\AppBundle\Entity\Departements $departement = null)
-    {
-        $this->Departement = $departement;
-
-        return $this;
-    }
-
-    /**
-     * Get departement
-     *
-     * @return \AppBundle\Entity\Departements
-     */
-    public function getDepartement()
-    {
-        return $this->Departement;
     }
 
     /**

@@ -25,16 +25,7 @@
                         <label for="Niveau" >Niveau hiérarchique</label>
                         <input type="number" id="Niveau" name="Niveau"  class="form-control"  placeholder="Niveau hiérarchique en nombre">
                     </div>
-                    <div class="form-group">
-                        <label for="Departement">Département</label>
-                        <select class="form-control" id="Departement" name="Departement">
-                        {% if departements is defined %}
-                                {% for departement in departements %}
-                                    <option value={{departement.id}}>{{departement.departement}}</option>
-                                {% endfor %}
-                        {% endif %}   
-                        </select>
-                    </div>
+                    
 
                <button id="BtnEnregistrer" type="submit"   class="btn btn-primary" style="float:right">Enregistrer</button>
                 </div>
@@ -51,7 +42,6 @@
             <tr>
                 <th>Profils</th>
                 <th>Niveau hiérarchique</th>
-                <th>Départements</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -62,7 +52,6 @@
                 <tr>
                     <td>{{ Profil.Profil }}</td>
                     <td>{{ Profil.Niveau }}</td>
-                    <td>{{ Profil.Departement.departement }}</td>
                     <td>            
                         <div class="btn-group" role="group" aria-label="...">
                             <button onclick="afficherProfil({{Profil.id}},'Edit')" type="button" class="btn btn-info" data-toggle="modal" data-target="#EditProfil"><i class="glyphicon glyphicon-search">
@@ -127,24 +116,9 @@
                     </div>
                     <div class="form-group">
                         <label for="NiveauModal" >Niveau hiérarchique</label>
-                        <input type="text" id="NiveauModal" name="NiveauModal"  class="form-control" placeholder="Niveau hiérarchique">
+                        <input type="number" id="NiveauModal" name="NiveauModal"  class="form-control" placeholder="Niveau hiérarchique">
                     </div>
-
-
-
-
-                    <div class="form-group">
-                        <label for="Departement">Département</label>
-                        <select class="form-control"  id="DepartementModal" name="DepartementModal">
-                        {% if departements is defined %}
-                                {% for departement in departements %}
-                                    <option value={{departement.id}}>{{departement.departement}}</option>
-                                {% endfor %}
-                        {% endif %}   
-                        </select>
-                    </div>
-
-                   
+   
                 </div>
 
                    
