@@ -1,0 +1,47 @@
+<?php
+
+namespace AppBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * CourriersArrivee
+ *
+ * @ORM\Table(name="courriers_arrivee")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\CourriersArriveeRepository")
+ */
+class CourriersArrivee
+{
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    private $id;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Arrivee", inversedBy="courrierArrivee")
+     * @ORM\JoinColumn(name="arrivee", referencedColumnName="id")
+     */
+    protected $arrivee;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="courrierArrivee")
+     * @ORM\JoinColumn(name="user", referencedColumnName="id")
+     */
+    protected $user;
+
+
+    /**
+     * Get id
+     *
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+}
+

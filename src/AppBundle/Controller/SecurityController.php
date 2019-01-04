@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use AppBundle\Entity\Notifications;
 
 class SecurityController extends Controller
 {
@@ -49,7 +50,11 @@ class SecurityController extends Controller
      */
     public function homeAction()
     {
+        /*$em = $this->getDoctrine()->getManager();
+        $user= $this->get('security.token_storage')->getToken()->getUser();
+        $notifications = $em->getRepository('AppBundle:Notifications')->findBy(array('user'=>$user));
 
+        return $this->render('auth/home.html.twig',array('notifications'=>$notifications));*/
         return $this->render('auth/home.html.twig');
     }
 }

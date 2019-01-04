@@ -101,6 +101,12 @@ class Arrivee
      */
     protected $departement;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="Services", inversedBy="arrivee")
+     * @ORM\JoinColumn(name="service", referencedColumnName="id")
+     */
+    protected $service;
+
     
 
     /**
@@ -415,5 +421,29 @@ class Arrivee
     public function getDepartement()
     {
         return $this->departement;
+    }
+
+    /**
+     * Set service
+     *
+     * @param \AppBundle\Entity\Services $service
+     *
+     * @return Arrivee
+     */
+    public function setService(\AppBundle\Entity\Services $service = null)
+    {
+        $this->service = $service;
+
+        return $this;
+    }
+
+    /**
+     * Get service
+     *
+     * @return \AppBundle\Entity\Services
+     */
+    public function getService()
+    {
+        return $this->service;
     }
 }

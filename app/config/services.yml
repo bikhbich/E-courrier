@@ -21,3 +21,13 @@ services:
     app.form_login_authenticator:
         class: AppBundle\Security\FormLoginAuthenticator
         arguments: ["@router", "@security.password_encoder"]
+
+    twig.extension:
+        # Register the class (The namespace must match)
+        class: AppBundle\Twig\AppExtension
+        # Inject doctrine as first parameter
+        arguments: 
+            doctrine : '@doctrine'
+        tags:
+          -  { name: twig.extension }
+    

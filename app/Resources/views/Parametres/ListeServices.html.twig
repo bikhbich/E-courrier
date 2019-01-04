@@ -1,0 +1,268 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion courrier : Liste services{% endblock %}
+
+{% block body %}
+    {% block menu_top %}
+        {% include 'menu.html.twig' %}
+    {% endblock %}
+
+
+<input id="ServiceId" name="ServiceId" type="hidden" value="">
+<div class="container">
+<div>
+    <form action="{{ path('AddService') }}" method="POST">
+            <fieldset id="fsetService" class="col-md-12">
+            <legend>Service</legend>
+
+                <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label for="Service" >Service</label>
+                        <input type="text" id="Service" name="Service"  class="form-control" placeholder="Service">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="Departement" >Département</label>
+                        <select class="form-control" id="Departement" name="Departement" >
+                            {% if departements is defined %}
+                                    {% for departement in departements %}
+                                        <option value={{ departement.id }} >{{ departement.departement }}</option>  
+                                    {% endfor %}
+                            {% endif %}  
+                         </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="chef" >Chef de service</label>
+                        <select class="form-control" id="Chef" name="Chef" >
+                        <option value="" >Aucun</option>  
+                            {% if chefs is defined %}
+                                    {% for chef in chefs %}
+                                        <option value={{ chef.id }} >{{ chef.civilite ~ ' ' ~ chef.prenom ~ ' ' ~ chef.nom }}</option>  
+                                    {% endfor %}
+                            {% endif %}  
+                         </select>
+                    </div>
+               <button id="BtnEnregistrer" type="submit"   class="btn btn-primary" style="float:right">Enregistrer</button>
+                </div>
+
+        </fieldset>
+
+</form>
+<img src="" style="height:50px" />
+</div>
+
+
+   <table id="ListeServices" class="table table-striped table-bordered" style="width:100%">
+        <thead>
+            <tr>
+                <th>Service</th>
+                <th>Département</th>
+                <th>Chef de service</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% if services is defined %}
+        
+            {% for service in services %}
+                <tr>
+                    <td>{{ service.service }}</td>
+                    <td>{{ service.departement.departement  }}</td>
+                    {% if service.chef is null %}
+                        <td>Aucun</td>
+                        {% else %}
+                        <td>{{ service.chef.civilite ~ ' ' ~ service.chef.prenom ~ ' ' ~ service.chef.nom  }}</td>
+                    {% endif %}
+                    <td>            
+                        <div class="btn-group" role="group" aria-label="...">
+                            <button onclick="afficherService({{service.id}},'Edit')" type="button" class="btn btn-info" data-toggle="modal" data-target="#EditService"><i class="glyphicon glyphicon-search">
+                                </i></button>
+                            <button onclick="afficherService({{service.id}},'Modif')" type="button" class="btn btn-default" data-toggle="modal" data-target="#EditService" ><i class="glyphicon glyphicon-pencil" >
+                                </i></button>
+                            <button   onclick="document.getElementById('ServiceId').value={{service.id}};"  type="button" class="btn btn-danger" data-toggle="modal" href="#ConfirmationSupp" ><i class="glyphicon glyphicon-trash">
+                                </i></button>
+                                
+                        </div>          
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endif %}
+        </tbody>
+    </table>
+</div>
+
+<!--  Modal Confirmation Suppression-->
+<div class="modal fade" id="ConfirmationSupp">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">x</button>
+                <h4 class="modal-title">Confirmation</h4>
+            </div>
+            <div class="modal-body">
+                Etes-vous sur de vouloir supprimer ce dépatement !<br>
+                NB: cette action peut supprimer tout les profils liés à ce service !
+            </div>
+            <div class="modal-footer">
+                <button onclick="DeleteService()" class="btn btn-info" data-dismiss="modal" >OUI</button>
+                <button class="btn btn-info" data-dismiss="modal">NON</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--  Modal Edit service-->
+
+<div class="modal fade bd-example-modal-lg" id="EditService" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Edit Service</h5>
+       
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form action="{{ path('ModifService') }}" method="POST">
+      <div class="modal-body">
+
+        <input id="IdService" name="IdService" type="hidden" value="">
+        <fieldset id="fsetService" class="col-md-12">
+            <legend>Service</legend>
+
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label for="ServiceModal" >Service</label>
+                        <input type="text" id="ServiceModal" name="ServiceModal"  class="form-control" placeholder="Service">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="DepartementModal" >Département</label>
+                        <select class="form-control" id="DepartementModal" name="DepartementModal" >
+                            {% if departements is defined %}
+                                    {% for departement in departements %}
+                                        <option value={{ departement.id }} >{{ departement.departement }}</option>  
+                                    {% endfor %}
+                            {% endif %}  
+                         </select>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="chefModal" >Chef de service</label>
+                        <select class="form-control" id="ChefModal" name="ChefModal" >
+                        <option value="" >Aucun</option>
+                            {% if chefs is defined %}
+                                    {% for chef in chefs %}
+                                        <option value={{ chef.id }} >{{ chef.civilite ~ ' ' ~ chef.prenom ~ ' ' ~ chef.nom }}</option>  
+                                    {% endfor %}
+                            {% endif %}  
+                         </select>
+                    </div>
+                </div>
+
+                   
+
+
+            </div>
+
+
+        
+        </fieldset>
+
+
+
+     
+      </div>
+     
+      <div class="modal-footer">
+      
+        <button id="BtnFermerModal" type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+        <button id="BtnEnregistrerModal" type="submit"   class="btn btn-primary">Enregistrer</button>
+      </div>
+     </form>
+    </div>
+  </div>
+</div>
+   
+
+
+
+
+
+
+
+
+{% endblock %}
+
+
+
+
+{% block javascripts %}
+    <script type="text/javascript">
+       $(document).ready(function()  { 
+           $('#ListeServices').DataTable({
+               lengthMenu:[5,10,15,20,25,100], 
+                    "language": {
+                        "url": "{{ asset('js/French.json') }}"
+                    }
+            });
+       ;} );
+
+     function afficherService($IdServ,$action){
+            var route="{{ path('AfficherService',{'id': 'IdServ'}) }}";
+            route=route.replace('IdServ',$IdServ)
+           
+        $.ajax({
+            url: route,
+            type: 'GET',
+            dataType: 'json',
+            error:function(XMLHttpRequest, textStatus, errorThrown) {
+                alert(textStatus, errorThrown);
+            },
+            success:function(data, textStatus, XMLHttpRequest) {
+               document.getElementById('IdService').value=data.id;
+               document.getElementById('ServiceModal').value=data.service;
+               if (data.chef != null){
+                    $("#ChefModal").val(data.chef.id).trigger("change");
+               } 
+               $("#DepartementModal").val(data.departement.id).trigger("change");
+              if ($action=='Edit'){
+                  
+               document.getElementById('BtnEnregistrerModal').style.display="none";
+               document.getElementById('ServiceModal').disabled=true;
+               document.getElementById('ChefModal').disabled=true;
+               document.getElementById('DepartementModal').disabled=true;
+               
+              }else{
+               document.getElementById('BtnEnregistrerModal').style.display="";
+               document.getElementById('ServiceModal').disabled=false;
+               document.getElementById('ChefModal').disabled=false;
+               document.getElementById('DepartementModal').disabled=false;
+
+              }
+
+              
+
+            }
+        });
+    }
+
+     function DeleteService(){
+           var route="{{ path('DeleteService',{'id': 'IdServ'}) }}";
+           var idService = document.getElementById('DepartementId').value;
+           route=route.replace('IdServ',idService)
+           window.location.href=route;
+       }
+
+       
+
+      
+       
+
+       
+    </script>
+{% endblock %}

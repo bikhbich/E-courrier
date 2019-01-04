@@ -35,6 +35,13 @@ class Controles
      */
     private $type;
 
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="pave", type="string", length=50)
+     */
+    private $pave;
+
 
     /**
      * Get id
@@ -92,5 +99,29 @@ class Controles
     public function getType()
     {
         return $this->type;
+    }
+
+    /**
+     * Set pave
+     *
+     * @param string $pave
+     *
+     * @return Controles
+     */
+    public function setPave($pave)
+    {
+        $this->pave = $pave;
+
+        return $this;
+    }
+
+    /**
+     * Get pave
+     *
+     * @return string
+     */
+    public function getPave()
+    {
+        return $this->pave;
     }
 }

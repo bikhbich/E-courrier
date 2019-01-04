@@ -30,6 +30,13 @@
                                      
                         </select>
                     </div>
+                    <div class="form-group">
+                        <label for="Pave">Pavé</label>
+                        <select class="form-control" id="Pave" name="Pave">
+                                    <option value="Direction">Direction</option>
+                                    <option value="Division">Division</option>
+                        </select>
+                    </div>
                     
 
                <button id="BtnEnregistrer" type="submit"   class="btn btn-primary" style="float:right">Enregistrer</button>
@@ -47,6 +54,7 @@
             <tr>
                 <th>Labels</th>
                 <th>Type</th>
+                <th>Pavé</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -66,6 +74,8 @@
                                     {% endif %}
                     
                     </td>
+                    
+                    <td>{{ Controle.pave }}</td>
                     <td>            
                         <div class="btn-group" role="group" aria-label="...">
                             <button onclick="afficherControle({{Controle.id}},'Edit')" type="button" class="btn btn-info" data-toggle="modal" data-target="#EditControle"><i class="glyphicon glyphicon-search">
@@ -138,6 +148,13 @@
                         </select>
 
                         
+                    </div>
+                    <div class="form-group">
+                        <label for="PaveModal">Pavé</label>
+                        <select class="form-control" id="PaveModal" name="PaveModal">
+                                    <option value="Direction">Direction</option>
+                                    <option value="Division">Division</option>
+                        </select>
                     </div>
 
 
@@ -216,17 +233,20 @@
                document.getElementById('IdControle').value=data.id;
                document.getElementById('LabelModal').value=data.label;
                $("#TypeModal").val(data.type).trigger("change");
+               $("#PaveModal").val(data.pave).trigger("change");
                
               if ($action=='Edit'){
                   
                document.getElementById('BtnEnregistrerModal').style.display="none";
                document.getElementById('LabelModal').disabled=true;
-               document.getElementById('id="TypeModal"').disabled=true;
+               document.getElementById('TypeModal').disabled=true;
+               document.getElementById('PaveModal').disabled=true;
                
               }else{
                document.getElementById('BtnEnregistrerModal').style.display="";
                document.getElementById('LabelModal').disabled=false;
-               document.getElementById('id="TypeModal"').disabled=false;
+               document.getElementById('TypeModal').disabled=false;
+               document.getElementById('PaveModal').disabled=false;
 
               }
 

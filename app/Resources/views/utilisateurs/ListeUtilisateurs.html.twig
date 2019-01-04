@@ -1,0 +1,300 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion courrier : Liste Arrivées{% endblock %}
+
+{% block body %}
+    {% block menu_top %}
+        {% include 'menu.html.twig' %}
+    {% endblock %}
+
+
+<input id="userId" name="userId" type="hidden" value="">
+<div class="container">
+<br><br>
+   <table id="ListeUsers" class="table table-striped table-bordered" style="width:100%">
+        <thead>
+            <tr>
+                <th>Civilité</th>
+                <th>Nom</th>
+                <th>Prénom</th>
+                <th>Email</th>
+                <th>Tél</th>
+                <th>Adresse</th>
+                <th>Date de naissiance</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% if users is defined %}
+        
+            {% for user in users %}
+                <tr>
+                    <td>{{ user.civilite }}</td>
+                    <td>{{ user.nom }}</td>
+                    <td>{{ user.prenom }}</td>
+                    <td>{{ user.email}}</td>
+                    <td>{{ user.tel}}</td>
+                    <td>{{ user.adresse}}</td>
+                    <td>{{ user.dateNaissance|date("d/m/Y")  }}</td>
+                    <td> 
+                        
+
+
+                        <div class="btn-group" role="group" aria-label="...">
+                            
+                            <button onclick="afficherUser({{user.id}},'Edit')" type="button" class="btn btn-info" data-toggle="modal" data-target="#EditUser"><i class="glyphicon glyphicon-search">
+                                </i></button>
+                            <button onclick="afficherUser({{user.id}},'Modif')" type="button" class="btn btn-default" data-toggle="modal" data-target="#EditUser" ><i class="glyphicon glyphicon-pencil" >
+                                </i></button>
+                            <button   onclick="document.getElementById('userId').value={{user.id}};"  type="button" class="btn btn-danger" data-toggle="modal" href="#ConfirmationSupp" ><i class="glyphicon glyphicon-trash">
+                                </i></button>
+                            
+                        </div>
+                        
+                        
+                    
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endif %}
+        </tbody>
+    </table>
+</div>
+
+<!--  Modal Confirmation Suppression-->
+<div class="modal fade" id="ConfirmationSupp">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">x</button>
+                <h4 class="modal-title">Confirmation</h4>
+            </div>
+            <div class="modal-body">
+                Etes-vous sur de vouloir supprimer cet utilisateur !
+            </div>
+            <div class="modal-footer">
+                <button onclick="DeleteUser()" class="btn btn-info" data-dismiss="modal" >OUI</button>
+                <button class="btn btn-info" data-dismiss="modal">NON</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--  Modal Edit Courrier-->
+   
+<div class="modal fade bd-example-modal-lg" id="EditUser" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Edit utilisateur</h5>
+       
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form action="{{ path('ModifUser') }}" method="POST">
+      <div class="modal-body">
+
+        <input id="IdUser" name="IdUser" type="hidden" value="">
+        <fieldset id="fsetCourrier" class="col-md-12">
+            <legend>Utilisateur</legend>
+
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label for="Civilite" >Civilité</label>
+                        <select class="form-control" id="Civilite" name="Civilite" >
+                            <option value="Mr" >Mr</option>  
+                            <option value="Mme" >Mme</option> 
+                            <option value="Mlle" >Mlle</option>      
+                         </select>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="Nom" >Nom</label>
+                        <input type="text" id="Nom" name="Nom"  class="form-control" placeholder="Nom">
+                    </div>
+                    <div class="form-group">
+                        <label for="Prenom" >Prénom</label>
+                        <input type="text" id="Prenom" name="Prenom"  class="form-control" placeholder="Prénom">
+                    </div>
+                    <div class="form-group">
+                        <label for="Email" >Email</label>
+                        <input type="text" id="Email" name="Email"  class="form-control" placeholder="Email">
+                    </div>
+                    <div class="form-group">
+                        <label for="Tel" >Tél</label>
+                        <input type="text" id="Tel" name="Tel"  class="form-control" placeholder="Tél">
+                    </div>
+                    <div class="form-group">
+                        <label for="Adresse" >Adresse</label>
+                        <input type="text" id="Adresse" name="Adresse"  class="form-control" placeholder="Adresse">
+                    </div>
+                    <div class="form-group">
+                        <label for="DateNaissance" >Date de naissance</label>
+                        <div id="datepickerDateNaissance" class="input-group date" data-date-format="yyyy-mm-dd">
+                        <input type="text" id="DateNaissance" name="DateNaissance"  class="form-control" >
+                        <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="Role" >Rôle</label>
+                        <select id="Role" name="Role" class="form-control">
+                            <option value="ROLE_DIRECTEUR">Directeur</option>
+                            <option value="ROLE_DIVISION">Chef division</option>
+                            <option value="ROLE_SERVICE">Chef service</option>
+                            <option value="ROLE_BUREAU_ORDRE">Bureau d'ordre</option>
+                            <option value="ROLE_AGENT">Agent</option></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="Passe" >Mot de passe</label>
+                        <input type="text" id="Passe" name="Passe"  class="form-control" placeholder="Mot de passe">
+                    </div>
+
+
+        
+                </div>
+
+
+
+            </div>
+
+
+
+        </fieldset>
+
+
+     
+      </div>
+     
+      <div class="modal-footer">
+      
+        <button id="BtnFermer" type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+        <button id="BtnEnregistrer" type="submit"   class="btn btn-primary">Enregistrer</button>
+      </div>
+     </form>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+{% endblock %}
+
+
+
+
+{% block javascripts %}
+    <script type="text/javascript">
+       $(document).ready(function()  { 
+           $('#ListeUsers').DataTable({
+                    "language": {
+                        "url": "{{ asset('js/French.json') }}"
+                    }
+            });
+       ;} );
+
+       function DeleteUser(){
+           var route="{{ path('DeleteUser',{'id': 'IdUser'}) }}";
+           var idUser = document.getElementById('userId').value;
+           route=route.replace('IdUser',idUser)
+           window.location.href=route;
+       }
+       function ModifArrivee(){
+           var route="{{ path('ModifUser') }}";
+           var idUser = document.getElementById('userId').value;
+           window.location.href=route;
+       }
+      
+       
+
+        $(function () {
+            $("#datepickerDateNaissance").datepicker({autoclose: true,todayHighlight: true}).datepicker();
+        });
+
+        function afficherUser($IdUser,$action){
+            var Nomfichier ;
+            var urlFichier ;
+            var route="{{ path('AfficherUser',{'id': 'IdUser'}) }}";
+            route=route.replace('IdUser',$IdUser)
+           
+        $.ajax({
+            url: route,
+            type: 'GET',
+            dataType: 'json',
+            error:function(XMLHttpRequest, textStatus, errorThrown) {
+                alert(textStatus, errorThrown);
+            },
+            success:function(data, textStatus, XMLHttpRequest) {
+               document.getElementById('IdUser').value=data.id;
+               document.getElementById('Civilite').value=data.civilite;
+               document.getElementById('Nom').value=data.nom;
+               document.getElementById('Prenom').value=data.prenom;
+               document.getElementById('Email').value=data.email;
+               document.getElementById('Tel').value=data.tel;
+               document.getElementById('Adresse').value=data.adresse;
+               document.getElementById('DateNaissance').value=format(new Date(data.dateNaissance.timestamp*1000), 'yyyy-MM-dd');
+               $("#Role").val(data.Role).trigger("change");
+               document.getElementById('Passe').value=data.password;
+
+              if ($action=='Edit'){
+                  
+               document.getElementById('BtnFermer').style.display="none";
+               document.getElementById('BtnEnregistrer').style.display="none";
+               document.getElementById('Civilite').disabled=true;
+               document.getElementById('Nom').disabled=true;
+               document.getElementById('Prenom').disabled=true;
+               document.getElementById('Email').disabled=true;
+               document.getElementById('Tel').disabled=true;
+               document.getElementById('Adresse').disabled=true;
+               document.getElementById('DateNaissance').disabled=true;
+               document.getElementById('Role').disabled=true;
+               document.getElementById('Passe').disabled=true;
+               
+              }else{
+               document.getElementById('BtnFermer').style.display="";
+               document.getElementById('BtnEnregistrer').style.display="";
+               document.getElementById('Civilite').disabled=false;
+               document.getElementById('Nom').disabled=false;
+               document.getElementById('Prenom').disabled=false;
+               document.getElementById('Email').disabled=false;
+               document.getElementById('Tel').disabled=false;
+               document.getElementById('Adresse').disabled=false;
+               document.getElementById('DateNaissance').disabled=false;
+               document.getElementById('Role').disabled=false;
+               document.getElementById('Passe').disabled=false;
+
+              }
+
+              
+
+            }
+        });
+    }
+
+    
+
+
+        format = function date2str(x, y) {
+                var z = {
+                        M: x.getMonth() + 1,
+                        d: x.getDate(),
+                        h: x.getHours(),
+                        m: x.getMinutes(),
+                        s: x.getSeconds()
+                        };
+                y = y.replace(/(M+|d+|h+|m+|s+)/g, function(v) {
+                    return ((v.length > 1 ? "0" : "") + eval('z.' + v.slice(-1))).slice(-2)
+                });
+
+                return y.replace(/(y+)/g, function(v) {
+                    return x.getFullYear().toString().slice(-v.length)
+                });
+        }   
+       
+    </script>
+{% endblock %}

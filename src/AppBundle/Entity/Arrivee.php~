@@ -101,6 +101,12 @@ class Arrivee
      */
     protected $departement;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="Services", inversedBy="arrivee")
+     * @ORM\JoinColumn(name="service", referencedColumnName="id")
+     */
+    protected $service;
+
     
 
     /**
