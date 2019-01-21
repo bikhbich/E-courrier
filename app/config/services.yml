@@ -23,11 +23,9 @@ services:
         arguments: ["@router", "@security.password_encoder"]
 
     twig.extension:
-        # Register the class (The namespace must match)
+        app.twig_extension:
         class: AppBundle\Twig\AppExtension
-        # Inject doctrine as first parameter
-        arguments: 
-            doctrine : '@doctrine'
+        public: false
         tags:
-          -  { name: twig.extension }
+            - { name: twig.extension }
     

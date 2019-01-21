@@ -11,16 +11,33 @@
 <input id="arriveId" name="arriveId" type="hidden" value="">
 <div class="container">
 <br><br>
-   <table id="ListeArrivees" class="table table-striped table-bordered" style="width:100%">
+    <fieldset id="fsetFiltres" class="col-md-12">
+                <legend>Filtres</legend>
+            <div class="input-group">
+                    <label for="TypeModal" style="float:left">Departement : </label>
+                    {% if departements is defined %}
+                        <select class="form-control" id="departement" name="TypeModal" style="float:left">
+                                    <option value="">Tous</option>
+                                    {% for departement in departements %}
+                                    <option value={{departement}}>{{departement}}</option>
+                                    {% endfor %}
+                        </select> 
+                    {% endif %}
+            </div>
+            <br>
+    </fieldset>
+    <br><br><br><br><br><br><br>
+   <table id="ListeArrivees" class="table table-striped table-bordered" >
         <thead>
             <tr>
                 <th>Réfence</th>
                 <th>Réf courrier</th>
                 <th>Type</th>
-                <th>Date courrier</th>
+                <!--<th>Date courrier</th>-->
                 <th>Date arrivée</th>
                 <th>Date creation</th>
                 <th>Expediteur</th>
+                <th>Departement</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -32,10 +49,15 @@
                     <td>{{ arrivee.RefArrivee }}</td>
                     <td>{{ arrivee.RefCourrier }}</td>
                     <td>{{ arrivee.Type }}</td>
-                    <td>{{ arrivee.DateCourrier|date("d/m/Y") }}</td>
+                    <!--<td>{{ arrivee.DateCourrier|date("d/m/Y") }}</td>-->
                     <td>{{ arrivee.DateArrivee|date("d/m/Y") }}</td>
                     <td>{{ arrivee.DateCreation|date("d/m/Y") }}</td>
                     <td>{{ arrivee.Expediteur.Expediteur }}</td>
+                    <td>
+                        {% if arrivee.departement != null %}
+                            {{ arrivee.departement.departement }}
+                        {% endif %}
+                    </td>
                     <td> 
                         
 
@@ -55,6 +77,13 @@
                                    &nbsp; <a href="{{ asset('publique/uploads/files/' ~ arrivee.Fichier) }}" target="_blank"><img src="{{ asset('images/Open-file-icon.ico') }}" /></a>
 
                                 {% endif %}
+                                {% set statutNotif = GetStatutNotif( app.user.id , arrivee.id) %}
+                                {% if statutNotif == 1  %}
+                                <button   onclick="paramArrivee({{arrivee.id}})"  type="button" class="btn btn-default"  ><i class="glyphicon glyphicon-bell"></i></button>
+                                {% endif %}
+
+
+                                
                         </div>
                         
                         
@@ -216,7 +245,50 @@
                         "url": "{{ asset('js/French.json') }}"
                     }
             });
-       ;} );
+      /* 
+       $('#ListeArrivees thead tr').clone(true).appendTo( '#ListeArrivees thead' );
+        $('#ListeArrivees thead tr:eq(-1) th').each( function (i) {
+            var title = $(this).text();
+            $(this).html( '<input type="text" placeholder="Recherche '+title+'" />' );
+    
+            $( 'input', this ).on( 'keyup change', function () {
+                if ( table.column(i).search() !== this.value   ) {
+                    table
+                        .column(i)
+                        .search( this.value )
+                        .draw();
+                }
+            } );
+        } );
+        if ( $.fn.dataTable.isDataTable( '#ListeArrivees' ) ) {
+            table = $('#ListeArrivees').DataTable();
+        }else {
+            table = $('#ListeArrivees').DataTable( {
+            orderCellsTop: true,
+            fixedHeader: true
+        } );
+        }*/
+
+        
+
+        
+        // recharche par departement
+        var table = $('#ListeArrivees').DataTable();
+ 
+        $('#departement').on( 'change', function () {
+                 table
+                .columns( 6 )
+                .search( this.value )
+                .draw();
+           
+        } );
+     
+       
+       
+       } );
+
+
+
 
        function DeleteArrivee(){
            var route="{{ path('DeleteArrivee',{'id': 'IdArrivee'}) }}";

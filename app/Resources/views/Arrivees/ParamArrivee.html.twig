@@ -15,6 +15,7 @@
 
     <div class="panel panel-default">
         {% if arrivee is defined %}
+        {{ ConsulteNotif(app.user.id, arrivee.id) }}
         <form action="{{ path('Nextarrivee') }}" method="POST">
         <input id="IdArrivee" name="IdArrivee" type="hidden" value="{{arrivee.id}}">
                                 <div class="panel-heading">Paramètrer Arrivée</div>
@@ -291,28 +292,18 @@
             </div>
         </div>
                 
-
-
-                
-                                    
-
-
-                                    
-
-
-                                    
-                                    
-                                    
-
-
-
                                     <div class="form-group">
-                                        <div class="col-md-8 col-md-offset-10" style="float:left;margin-top:10px;">
-                                            <button type="submit" class="btn btn-primary">
-                                                <i class="fa fa-btn fa-user"></i> Enregistrer
+                                        <div class="col-md-6 col-md-offset-6" style="float:right;margin-top:10px;">
+                                            <button type="submit" class="btn btn-primary" style="float:right">
+                                                <i class="fa fa-check-square" aria-hidden="true"></i> Enregistrer
                                             </button>
-                                            <button type="button" class="btn btn-secondary" onclick="javascript:history.go(-1)">
-                                                <i class="fa fa-btn fa-user"></i> Annuler
+                                            <img src="{{asset('images/vide.png') }}"  width="10px"  style="float:right" />
+                                            <button type="button" data-toggle="modal" data-target="#ClasserCourrier" class="btn btn-success" style="float:right">
+                                                <i class="fa fa-download" aria-hidden="true"></i> Classer
+                                            </button>
+                                            <img src="{{asset('images/vide.png') }}"  width="10px"  style="float:right" />
+                                            <button type="button" class="btn btn-secondary" onclick="javascript:history.go(-1)" style="float:right">
+                                                <i class="fa fa-reply-all" aria-hidden="true"></i> Annuler
                                             </button>
 
                                         </div>
@@ -328,6 +319,95 @@
         
         {% endif %}
     </div>
+
+        <!--  Modal Calasser Courrier-->
+        <div class="modal fade bd-example-modal-lg" id="ClasserCourrier" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Classer Arrivée</h5>
+            
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="{{ path('ModifArrivee') }}" method="POST">
+            <div class="modal-body">
+
+                <input id="IdArrivee" name="IdArrivee" type="hidden" value="">
+                <fieldset id="fsetCourrier" class="col-md-12">
+                    <legend>Réponse courrier</legend>
+
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <div class="input-group image-preview">
+                                                   <input type="text" class="form-control image-preview-filename" disabled="disabled"> <!-- don't give a name === doesn't send on POST/GET -->
+
+
+                                                        <span class="input-group-btn">
+                                                            <!-- image-preview-clear button -->
+                                    <button type="button" class="btn btn-default image-preview-clear" style="display:none;">
+                                        <span class="glyphicon glyphicon-remove"></span> Clear
+                                    </button>
+                                                                                                <!-- image-preview-input -->
+                                    <div class="btn btn-default image-preview-input">
+                                        <span class="glyphicon glyphicon-folder-open"></span>
+                                        <span class="image-preview-input-title">Parcourir</span>
+                                        <!-- <input type="file" accept="image/png, image/jpeg, image/gif" name="input-file-preview"/> rename it -->
+                                        
+                                    </div>
+                                </span>
+                            </div>
+
+                            
+
+
+                            <div class="form-group">
+                                <label for="Objet" >Objet</label>
+                                <textarea id="Objet" name="Objet" required="required" class="form-control" placeholder="Objet" rows="5"></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="DateCourrier" >Date Courrier</label>
+                                <div id="datepickerCourrier" class="input-group date" data-date-format="yyyy-mm-dd">
+                                <input type="text" id="DateCourrier" name="DateCourrier"  class="form-control" >
+                                <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+                            </div>
+                            <div class="input-group image-preview">
+                                                   <input type="text" class="form-control image-preview-filename" disabled="disabled"> <!-- don't give a name === doesn't send on POST/GET -->
+
+
+                                                        <span class="input-group-btn">
+                                                            <!-- image-preview-clear button -->
+                                                            <button type="button" class="btn btn-default image-preview-clear" style="display:none;">
+                                                                <span class="glyphicon glyphicon-remove"></span> Clear
+                                                            </button>
+                                                                                                <!-- image-preview-input -->
+                                                            <div class="btn btn-default image-preview-input">
+                                                                <span class="glyphicon glyphicon-folder-open"></span>
+                                                                <span class="image-preview-input-title">Parcourir</span>
+                                                                 <!-- <input type="file" accept="image/png, image/jpeg, image/gif" name="input-file-preview"/> rename it -->
+                        </div>
+
+                        </div>
+
+
+                </div>
+
+                </fieldset>
+
+            
+            </div>
+            
+            <div class="modal-footer">
+            
+                <button id="BtnFermer" type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                <button id="BtnEnregistrer" type="submit"   class="btn btn-primary">Enregistrer</button>
+            </div>
+            </form>
+            </div>
+        </div>
+        </div>
 
 
 

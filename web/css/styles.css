@@ -480,6 +480,12 @@ legend {
     color: #333;
   }
 
+  .btn-group>.btn {
+      float:none !important;
+  }
+
+  
+
 
 
 

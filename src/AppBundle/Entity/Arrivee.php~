@@ -107,6 +107,12 @@ class Arrivee
      */
     protected $service;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="arrivee")
+     * @ORM\JoinColumn(name="SuiviPar", referencedColumnName="id")
+     */
+    protected $suivipar;
+
     
 
     /**
@@ -421,5 +427,29 @@ class Arrivee
     public function getDepartement()
     {
         return $this->departement;
+    }
+
+    /**
+     * Set service
+     *
+     * @param \AppBundle\Entity\Services $service
+     *
+     * @return Arrivee
+     */
+    public function setService(\AppBundle\Entity\Services $service = null)
+    {
+        $this->service = $service;
+
+        return $this;
+    }
+
+    /**
+     * Get service
+     *
+     * @return \AppBundle\Entity\Services
+     */
+    public function getService()
+    {
+        return $this->service;
     }
 }

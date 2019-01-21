@@ -107,6 +107,12 @@ class Arrivee
      */
     protected $service;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="arrivee")
+     * @ORM\JoinColumn(name="SuiviPar", referencedColumnName="id")
+     */
+    protected $suivipar;
+
     
 
     /**
@@ -445,5 +451,29 @@ class Arrivee
     public function getService()
     {
         return $this->service;
+    }
+
+    /**
+     * Set suivipar
+     *
+     * @param \AppBundle\Entity\User $suivipar
+     *
+     * @return Arrivee
+     */
+    public function setSuivipar(\AppBundle\Entity\User $suivipar = null)
+    {
+        $this->suivipar = $suivipar;
+
+        return $this;
+    }
+
+    /**
+     * Get suivipar
+     *
+     * @return \AppBundle\Entity\User
+     */
+    public function getSuivipar()
+    {
+        return $this->suivipar;
     }
 }

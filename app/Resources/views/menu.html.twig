@@ -88,38 +88,53 @@
             </ul>
 
             <ul class="nav navbar-nav navbar-right Dpnotification" >
-            {{find(123)}}
+            {% set notifications = GetNotifications(app.user.id) %}
+            {% set notificationsActif = GetNotificationsActif(app.user.id) %}
             {% if notifications is defined %}
                 <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                <div class="notifications" title="({{notifications|length}}) Notifications"><i class="fa fa-bell"></i> <span class="num">{{notifications|length}}</span></div>
+                <div class="notifications" title="({{notificationsActif|length}}) Notifications"><i class="fa fa-bell"></i> 
+                    {% if notificationsActif|length > 0  %}
+                        <span class="num">{{notificationsActif|length}}</span>
+                    {% endif %}
+                </div>
                 </a>
                 <ul class="dropdown-menu notify-drop">
                     <div class="notify-drop-title">
                         <div class="row">
-                            <div class="col-md-6 col-sm-6 col-xs-6">(<b>{{notifications|length}}</b>) Notifications </div>
-                            <div class="col-md-6 col-sm-6 col-xs-6 text-right"><a href="" class="rIcon allRead" data-tooltip="tooltip" data-placement="bottom" title="tümü okundu."><i class="fa fa-dot-circle-o"></i></a></div>
+                            <div class="col-md-12 col-sm-12 col-xs-12">(<b>{{notificationsActif|length}}</b>) Notifications non consultées </div>
                         </div>
                     </div>
                     <!-- end notify title -->
                     <!-- notify content -->
                     <div class="drop-content">
                     {% for notification in notifications %}
+
                         <li>
-                            <div class="col-md-3 col-sm-3 col-xs-3"><div class="notify-img"><img src="{{asset('images/imgArrivee.png')}}" alt=""></div></div>
-                            <div class="col-md-9 col-sm-9 col-xs-9 pd-l0"><a href="{{ path('paramarrivee',{'id': notification.arrivee.id}) }}">Nouveau arrivée {{notification.arrivee.refCourrier}}</a> de la part de {{notification.arrivee.expediteur.expediteur}}
+                            <div class="col-md-3 col-sm-3 col-xs-3">
+                                <div class="notify-img">
+                                    <a href="{{ path('paramarrivee',{'id': notification.arrivee.id}) }}">
+                                    {% if notification.statut == 1 %}
+                                        <img src="{{asset('images/notifActif.png')}}" alt="Arrivée">
+                                        {% else %}
+                                        <img src="{{asset('images/imgArrivee.png')}}" alt="Arrivée">
+                                    {% endif %}
+                                    
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-md-9 col-sm-9 col-xs-9 pd-l0"><a href="{{ path('paramarrivee',{'id': notification.arrivee.id}) }}">Nouveau arrivée {{notification.arrivee.refCourrier}}</a> de la part de "{{notification.arrivee.expediteur.expediteur}}"
                             
                             <hr>
                             <p class="time">du {{notification.arrivee.DateArrivee|date("d/m/Y")}}</p>
                             </div>
                         </li>
-                        
-                                                                  
-                        {% endfor %}
+                                                              
+                    {% endfor %}
                         
                     </div>
                     <div class="notify-drop-footer text-center">
-                        <a href=""><i class="fa fa-eye"></i> Tümünü Göster</a>
+                        <a href=""><i class="fa fa-eye"></i> Voir toutes les notifications</a>
                     </div>
                 </ul>
                 </li>

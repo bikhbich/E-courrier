@@ -407,16 +407,25 @@ class DefaultController extends Controller
         $em = $this->getDoctrine()->getManager();
         $user= $this->get('security.token_storage')->getToken()->getUser();
         $repository = $em->getRepository('AppBundle:CourriersArrivee');
-        $courrierArrivees = $repository->findBy(array('user'=>$user));
+        $courrierArrivees = $repository->findBy(array('user'=>$user),  array('id' => 'desc'));
         $arrivees = Array();
+        $departements = Array();
         foreach ($courrierArrivees as $courrierArrivee  ){
             array_push($arrivees, $courrierArrivee->getArrivee());
+            if ($courrierArrivee->getArrivee()->getDepartement() != null ){
+                array_push($departements, $courrierArrivee->getArrivee()->getDepartement()->getDepartement());
+            }
+            
         }
         $arrivee = new Arrivee();
         $formArrivee = $this->createForm(FormArrivee::class, $arrivee);
         $formArrivee->handleRequest($request);
+        //$repository = $em->getRepository('AppBundle:Departements');
+        //$departements = $repository->findAll();
+        $departementss = array_unique($departements);
+        //dump($courrierArrivees);die;
 
-        return $this->render('Arrivees/ListeArrivees.html.twig', array( 'arrivees'=> $arrivees , 'formArrivee' => $formArrivee->createView()));
+        return $this->render('Arrivees/ListeArrivees.html.twig', array( 'arrivees'=> $arrivees , 'departements'=> $departementss ,'formArrivee' => $formArrivee->createView()));
     }
 
 
