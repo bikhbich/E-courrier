@@ -138,6 +138,8 @@ class DefaultController extends Controller
         $departements = $em->getRepository('AppBundle:Departements')->findAll();
         $directionControles = $em->getRepository('AppBundle:Controles')->findBy(array('pave'=>'Direction'));
         $divisionControles = $em->getRepository('AppBundle:Controles')->findBy(array('pave'=>'Division'));
+        $serviceControles = $em->getRepository('AppBundle:Controles')->findBy(array('pave'=>'Service'));
+        $agentControles = $em->getRepository('AppBundle:Controles')->findBy(array('pave'=>'Agent'));
         $repository = $em->getRepository('AppBundle:Actions');
         $actions = $repository->findBy(array('arrivee'=>$arrivee));
 
@@ -145,12 +147,14 @@ class DefaultController extends Controller
        if ($arrivee->getDepartement() != null){
             $repository = $em->getRepository('AppBundle:Services');
             $services = $repository->findBy(array('departement'=>$arrivee->getDepartement()));
+            $repository = $em->getRepository('AppBundle:User');
+            $agents = $repository->findBy(array('Role'=>'ROLE_AGENT','departement'=>$arrivee->getDepartement()));
         
-            return $this->render('Arrivees/ParamArrivee.html.twig', array( 'arrivee'=> $arrivee,'departements'=>$departements,'directionControles'=>$directionControles, 'divisionControles' => $divisionControles ,'actions'=>$actions , 'services'=>$services));
+            return $this->render('Arrivees/ParamArrivee.html.twig', array( 'arrivee'=> $arrivee,'departements'=>$departements,'directionControles'=>$directionControles, 'divisionControles' => $divisionControles ,'serviceControles' => $serviceControles , 'agentControles'=> $agentControles ,'actions'=>$actions , 'services'=>$services , "agents" => $agents));
        }
        else
        {
-            return $this->render('Arrivees/ParamArrivee.html.twig', array( 'arrivee'=> $arrivee,'departements'=>$departements,'directionControles'=>$directionControles, 'divisionControles' => $divisionControles ,'actions'=>$actions));
+            return $this->render('Arrivees/ParamArrivee.html.twig', array( 'arrivee'=> $arrivee,'departements'=>$departements,'directionControles'=>$directionControles, 'divisionControles' => $divisionControles ,'serviceControles' => $serviceControles , 'agentControles'=> $agentControles ,'actions'=>$actions));
        }
        
     }
@@ -328,7 +332,118 @@ class DefaultController extends Controller
         if($user->getRole()=='ROLE_DIVISION'  ){
             $repository = $em->getRepository('AppBundle:Services');
             $service = $repository->find($request->get('Service'));
-            $arrivee->setService($service);
+            
+            if($request->get('Service') != null & $arrivee->getAgent()!=null){
+               
+                //suppression anciens messages  enoyées a l'agnet
+                $repository = $em->getRepository('AppBundle:User');
+                $ancienAgent = $repository->find($arrivee->getAgent()->getId());
+                $anciensAgentMessages= $em->getRepository('AppBundle:CourriersArrivee')->findBy( array('arrivee'=>$arrivee, 'user'=>$ancienAgent));
+                foreach($anciensAgentMessages as $message)
+                {
+                    $em->remove($message);
+                    $em->flush();
+                }
+
+                //suppression anciens notifications service
+                $anciensAgentNotif= $em->getRepository('AppBundle:Notifications')->findBy( array('arrivee'=>$arrivee, 'user'=>$ancienAgent));
+                foreach($anciensAgentNotif as $notification)
+                {
+                    $em->remove($notification);
+                    $em->flush();
+                }
+
+               // remetrre agent null car le service a été changé
+               $arrivee->setAgent(null);
+               $arrivee->setService($service);
+            }
+            //dump("agent ".$request->get('Agent'),"service ".$request->get('Service'));die;
+           // dump($arrivee->getService());die;
+            if ($request->get('Service') == '' & $request->get('Agent') != ''  ){
+
+                if ($arrivee->getService()!=null){
+                     // supprimer les anciennes notifications et messages enoyées au chef de service
+                     $repository = $em->getRepository('AppBundle:Services');
+                     $ancienService = $repository->find($arrivee->getService()->getId());
+                     $anciensServiceMessages= $em->getRepository('AppBundle:CourriersArrivee')->findBy( array('arrivee'=>$arrivee, 'user'=>$ancienService->getChef()));
+                     
+                     foreach($anciensServiceMessages as $message)
+                     {
+                         $em->remove($message);
+                         $em->flush();
+                     }
+ 
+                     //suppression anciens notifications département enoyées au chef de service
+                     $anciensServiceNotif= $em->getRepository('AppBundle:Notifications')->findBy( array('arrivee'=>$arrivee, 'user'=>$ancienService->getChef()));
+                     foreach($anciensServiceNotif as $notification)
+                     {
+                         $em->remove($notification);
+                         $em->flush();
+                     }
+                     $arrivee->setService(null);
+
+                }
+
+
+
+
+                $repository = $em->getRepository('AppBundle:User');
+                $agent = $repository->find($request->get('Agent'));
+                if ($arrivee->getAgent() != null){
+                    if ( $arrivee->getAgent()->getId() != $request->get('Agent')   ){
+                        //supprimer les anciens message envoyées a l'agent
+                        //suppression anciens messages  enoyées a l'agnet
+                         $repository = $em->getRepository('AppBundle:User');
+                         $ancienAgent = $repository->find($arrivee->getAgent()->getId());
+                         $anciensAgentMessages= $em->getRepository('AppBundle:CourriersArrivee')->findBy( array('arrivee'=>$arrivee, 'user'=>$ancienAgent));
+                         foreach($anciensAgentMessages as $message)
+                         {
+                             $em->remove($message);
+                             $em->flush();
+                         }
+     
+                         //suppression anciens notifications service
+                         $anciensAgentNotif= $em->getRepository('AppBundle:Notifications')->findBy( array('arrivee'=>$arrivee, 'user'=>$ancienAgent));
+                         foreach($anciensAgentNotif as $notification)
+                         {
+                             $em->remove($notification);
+                             $em->flush();
+                         }
+     
+                        // remetrre agent null car le service a été changé
+                        $arrivee->setAgent(null);
+     
+                         
+                    }
+
+                }
+                
+                $arrivee->setAgent($agent);
+
+
+                //tester si c'est déja envoyé ou pas
+                $envoiServ= $em->getRepository('AppBundle:CourriersArrivee')->findOneBy( array('arrivee'=>$arrivee, 'user'=>$agent));
+                if ($envoiServ == null){
+                    // Envoi Message et notification a l'agent
+                    $courrierArrivee = new CourriersArrivee();
+                    $courrierArrivee->setArrivee($arrivee);
+                    $courrierArrivee->setUser($agent);
+                    $em->persist($courrierArrivee);
+                    $em->flush();
+                    $notification = new Notifications();
+                    $notification->setArrivee($arrivee);
+                    $notification->setUser($agent);
+                    $notification->setStatut(1);
+                    $em->persist($notification);
+                    $em->flush();
+                }
+
+
+
+
+            }
+
+            
             //pavé service
             if($request->get('Service') != null){
                 $repository = $em->getRepository('AppBundle:Services');
@@ -337,7 +452,7 @@ class DefaultController extends Controller
                 //tester si c'est déja envoyé ou pas
                 $envoiServ= $em->getRepository('AppBundle:CourriersArrivee')->findOneBy( array('arrivee'=>$arrivee, 'user'=>$service->getChef()));
                 if ($envoiServ == null){
-                    // Envoi Message et notification au département concerné
+                    // Envoi Message et notification au chef de service
                     $courrierArrivee = new CourriersArrivee();
                     $courrierArrivee->setArrivee($arrivee);
                     $courrierArrivee->setUser($service->getChef());
@@ -350,8 +465,119 @@ class DefaultController extends Controller
                     $em->persist($notification);
                     $em->flush();
                 }
+
+                //--------------------------999999
+
+                if( (string)$arrivee->getService()->getId() != $request->get('Service')  ){
+                    // supprimer les anciennes notifications et messages enoyées au chef de service
+                    $repository = $em->getRepository('AppBundle:Services');
+                    $ancienService = $repository->find($arrivee->getService()->getId());
+                    $anciensServiceMessages= $em->getRepository('AppBundle:CourriersArrivee')->findBy( array('arrivee'=>$arrivee, 'user'=>$ancienService->getChef()));
+                    foreach($anciensServiceMessages as $message)
+                    {
+                        $em->remove($message);
+                        $em->flush();
+                    }
+
+                    //suppression anciens notifications service enoyées au chef de service
+                    $anciensServiceNotif= $em->getRepository('AppBundle:Notifications')->findBy( array('arrivee'=>$arrivee, 'user'=>$ancienService->getChef()));
+                    foreach($anciensServiceNotif as $notification)
+                    {
+                        $em->remove($notification);
+                        $em->flush();
+                    }
+
+                   if ($arrivee->getAgent() != null) {
+                       //suppression anciens messages  enoyées a l'agnet
+                    $repository = $em->getRepository('AppBundle:User');
+                    $ancienAgent = $repository->find($arrivee->getAgent()->getId());
+                    $anciensAgentMessages= $em->getRepository('AppBundle:CourriersArrivee')->findBy( array('arrivee'=>$arrivee, 'user'=>$ancienAgent));
+                    foreach($anciensAgentMessages as $message)
+                    {
+                        $em->remove($message);
+                        $em->flush();
+                    }
+
+                    //suppression anciens notifications agent
+                    $anciensAgentNotif= $em->getRepository('AppBundle:Notifications')->findBy( array('arrivee'=>$arrivee, 'user'=>$ancienAgent));
+                    foreach($anciensAgentNotif as $notification)
+                    {
+                        $em->remove($notification);
+                        $em->flush();
+                    }
+
+                   }
+
+                    // remetrre Agent null car le service a été changé
+                    $arrivee->setAgent(null);
+
+
+                }
+
+
+                //-------------------------9999999
+
+
+
+
+
+
+
+
+
+
+            }else{
+                    // si le chef de service a été déja défini 
+                if ($arrivee->getService()!=null){
+
+
+                     // supprimer les anciennes notifications et messages enoyées au chef de service
+                 $repository = $em->getRepository('AppBundle:Services');
+                 $ancienService = $repository->find($arrivee->getService()->getId());
+                 $anciensServiceMessages= $em->getRepository('AppBundle:CourriersArrivee')->findBy( array('arrivee'=>$arrivee, 'user'=>$ancienService->getChef()));
+                 foreach($anciensServiceMessages as $message)
+                 {
+                     $em->remove($message);
+                     $em->flush();
+                 }
+
+                 //suppression anciens notifications département enoyées au chef de service
+                 $anciensServiceNotif= $em->getRepository('AppBundle:Notifications')->findBy( array('arrivee'=>$arrivee, 'user'=>$ancienService->getChef()));
+                 foreach($anciensServiceNotif as $notification)
+                 {
+                     $em->remove($notification);
+                     $em->flush();
+                 }
+
+                if ($arrivee->getAgent() != null) {
+                    //suppression anciens messages  enoyées a l'agnet
+                 $repository = $em->getRepository('AppBundle:User');
+                 $ancienAgent = $repository->find($arrivee->getAgent()->getId());
+                 $anciensAgentMessages= $em->getRepository('AppBundle:CourriersArrivee')->findBy( array('arrivee'=>$arrivee, 'user'=>$ancienAgent));
+                 foreach($anciensAgentMessages as $message)
+                 {
+                     $em->remove($message);
+                     $em->flush();
+                 }
+
+                 //suppression anciens notifications service
+                 $anciensAgentNotif= $em->getRepository('AppBundle:Notifications')->findBy( array('arrivee'=>$arrivee, 'user'=>$ancienAgent));
+                 foreach($anciensAgentNotif as $notification)
+                 {
+                     $em->remove($notification);
+                     $em->flush();
+                 }
+
+                }
+
+                }
+                
+
+
+
+
             }
-            //  retenir les actions
+            //  retenir les actions pavé division
             $divisionControles = $em->getRepository('AppBundle:Controles')->findBy(array('pave'=>'Division'));
                 
             foreach($divisionControles as $controle)
@@ -378,6 +604,88 @@ class DefaultController extends Controller
                             }
                         }
         
+            }
+
+            // pavé service 
+            if($user->getRole()=='ROLE_SERVICE'  ){
+
+                if ($arrivee->getAgent() != null) {
+                    //suppression anciens messages  enoyées a l'agnet
+                 $repository = $em->getRepository('AppBundle:User');
+                 $ancienAgent = $repository->find($arrivee->getAgent()->getId());
+                 $anciensAgentMessages= $em->getRepository('AppBundle:CourriersArrivee')->findBy( array('arrivee'=>$arrivee, 'user'=>$ancienAgent));
+                 foreach($anciensAgentMessages as $message)
+                 {
+                     $em->remove($message);
+                     $em->flush();
+                 }
+
+                 //suppression anciens notifications service
+                 $anciensAgentNotif= $em->getRepository('AppBundle:Notifications')->findBy( array('arrivee'=>$arrivee, 'user'=>$ancienAgent));
+                 foreach($anciensAgentNotif as $notification)
+                 {
+                     $em->remove($notification);
+                     $em->flush();
+                 }
+
+                }
+
+                if($request->get('AgentService') != null){
+                    $repository = $em->getRepository('AppBundle:User');
+                    $agent = $repository->find($request->get('AgentService'));
+                    $arrivee->setAgent($agent);
+                    //tester si c'est déja envoyé ou pas
+                    $envoiServ= $em->getRepository('AppBundle:CourriersArrivee')->findOneBy( array('arrivee'=>$arrivee, 'user'=>$agent));
+                    if ($envoiServ == null){
+                        // Envoi Message et notification à l'agent
+                        $courrierArrivee = new CourriersArrivee();
+                        $courrierArrivee->setArrivee($arrivee);
+                        $courrierArrivee->setUser($agent);
+                        $em->persist($courrierArrivee);
+                        $em->flush();
+                        $notification = new Notifications();
+                        $notification->setArrivee($arrivee);
+                        $notification->setUser($agent);
+                        $notification->setStatut(1);
+                        $em->persist($notification);
+                        $em->flush();
+                    }
+                }else{
+                    $arrivee->setAgent(null);
+                }
+
+
+
+
+
+
+
+                //  retenir les actions Pavé service
+            $serviceControles = $em->getRepository('AppBundle:Controles')->findBy(array('pave'=>'Service'));
+                
+            foreach($serviceControles as $controle)
+                        {
+                                        
+                            $repository = $em->getRepository('AppBundle:Actions');
+                                        
+                            $action = $repository->findOneBy(array('arrivee'=>$arrivee,'controle'=>$controle));
+                                       
+                            if ($action ){
+                                $action->setControle($controle);
+                                $action->setValue($request->get('controle_'.$controle->getId()));
+                                $action->setArrivee($arrivee);
+                                $em->flush();
+                
+                            }else{
+                                $Newaction = new Actions();
+                                $Newaction->setControle($controle);
+                                $Newaction->setValue($request->get('controle_'.$controle->getId()));
+                                $Newaction->setArrivee($arrivee);
+                                $em->persist($Newaction);
+                                $em->flush();
+                
+                            }
+                        }
             }
                     
         $em->flush();
@@ -484,17 +792,21 @@ class DefaultController extends Controller
         $em = $this->getDoctrine()->getManager();
         $repository = $em->getRepository('AppBundle:Arrivee');
         $arrivee = $repository->find($id);
-       
-            $encoders = array( new JsonEncoder());
-            $normalizers = array(new ObjectNormalizer());
+        $normalizer = new ObjectNormalizer();
+        $normalizer->setCircularReferenceLimit(2);
+        $normalizer->setCircularReferenceHandler(function ($object) {
+                return $object->getId();
+        });
+        $normalizers = array($normalizer);
+        $encoders = array( new JsonEncoder());
 
-            $serializer = new Serializer($normalizers, $encoders);
+        $serializer = new Serializer($normalizers, $encoders);
 
-            $jsonContent = $serializer->serialize($arrivee, 'json');
-            return new Response($jsonContent);
-
+        $jsonContent = $serializer->serialize($arrivee, 'json');
+        return new Response($jsonContent);
             
       }
+
 
     /**
      * @Route("/ModifArrivee", name="ModifArrivee")
@@ -1017,13 +1329,20 @@ class DefaultController extends Controller
       $em = $this->getDoctrine()->getManager();
       $repository = $em->getRepository('AppBundle:Services');
       $services = $repository->findBy(array('departement'=>$id));
-          $encoders = array( new JsonEncoder());
-          $normalizers = array(new ObjectNormalizer());
+      //dump($services);die;
 
-          $serializer = new Serializer($normalizers, $encoders);
+        $normalizer = new ObjectNormalizer();
+        $normalizer->setCircularReferenceLimit(2);
+        $normalizer->setCircularReferenceHandler(function ($object) {
+                return $object->getId();
+        });
+        $normalizers = array($normalizer);
+        $encoders = array( new JsonEncoder());
 
-          $jsonContent = $serializer->serialize($services, 'json');
-          return new Response($jsonContent);
+        $serializer = new Serializer($normalizers, $encoders);
+
+        $jsonContent = $serializer->serialize($services, 'json');
+        return new Response($jsonContent);
 
           
     }

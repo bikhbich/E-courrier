@@ -28,6 +28,10 @@ class UserType extends AbstractType
             ->add('Adresse', TextType::class)
             ->add('DateNaissance', DateType::class, array('widget' => 'single_text','format' => 'yyyy-MM-dd' ,'data' => new \DateTime("now"),'label' => false,'html5' => false, ))
             ->add('Role', ChoiceType::class, array('choices' => array('Directeur' =>'ROLE_DIRECTEUR', 'Chef division' => 'ROLE_DIVISION' , 'Chef service' => 'ROLE_SERVICE', "Bureau d'ordre" => 'ROLE_BUREAU_ORDRE', 'Agent' => 'ROLE_AGENT'), 'multiple'=> false))
+            ->add('Departement', EntityType::class, [
+                'class' => Departements::class,
+                'choice_label' => 'Departement',
+            ])
             ->add('plainPassword', RepeatedType::class, [
                 'type' => PasswordType::class,
                 'first_options' => ['label' => 'Mot de passe'],

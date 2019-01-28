@@ -90,6 +90,12 @@ class User implements UserInterface
      */
     protected $password;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="Departements", inversedBy="arrivee")
+     * @ORM\JoinColumn(name="departement", referencedColumnName="id")
+     */
+    protected $departement;
+
     public function eraseCredentials()
     {
         return null;
@@ -322,4 +328,28 @@ class User implements UserInterface
 
    
 
+
+    /**
+     * Set departement
+     *
+     * @param \AppBundle\Entity\Departements $departement
+     *
+     * @return User
+     */
+    public function setDepartement(\AppBundle\Entity\Departements $departement = null)
+    {
+        $this->departement = $departement;
+
+        return $this;
+    }
+
+    /**
+     * Get departement
+     *
+     * @return \AppBundle\Entity\Departements
+     */
+    public function getDepartement()
+    {
+        return $this->departement;
+    }
 }

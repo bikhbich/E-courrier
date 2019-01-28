@@ -76,6 +76,12 @@
                         </div>
                         <div class="form_group">
                             <div class="col-md-8 col-md-offset-2">
+                                <label for="Departement" >Departement</label>
+                                {{ form_widget(form.Departement, {'attr': {'class': 'form-control'}}) }}
+                            </div>
+                        </div>
+                        <div class="form_group">
+                            <div class="col-md-8 col-md-offset-2">
                                 <label for="Mot_de_passe" >Mot de passe</label>
                                 {{ form_widget(form.plainPassword.first, {'attr': {'class': 'form-control'}}) }}
                             </div>

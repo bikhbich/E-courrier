@@ -29,8 +29,10 @@
                                 <li><a href="#tab2primary" data-toggle="tab">Expéditeur</a></li>
                                 <li><a href="#tab3primary" data-toggle="tab">Direction</a></li>
                                 <li><a href="#tab4primary" data-toggle="tab">Division</a></li>
-                                <li><a href="#tab5primary" data-toggle="tab">Service</a></li>
-                                <li><a href="#tab6primary" data-toggle="tab">Agent</a></li>
+                                {% if arrivee.service != null %}<li><a href="#tab5primary" data-toggle="tab">Service</a></li>{% endif %}
+                                {% if arrivee.agent != null %}<li><a href="#tab6primary" data-toggle="tab">Agent</a></li>{% endif %}
+                                
+                                
                                 
                             </ul>
                     </div>
@@ -138,7 +140,7 @@
 
                                                 <div class="form-group">
                                                     <label for="Departement">Département</label>
-                                                    <select class="form-control" id="Departement" name="Departement" Onchange="chargerServices(this.value);">
+                                                    <select class="form-control"  id="Departement" name="Departement" Onchange="chargerServices(this.value);">
                                                     {% if departements is defined %}
                                                             {% for departement in departements %}
                                                                 {% if arrivee.departement != null  %}
@@ -218,7 +220,7 @@
 
                                                 <div class="form-group">
                                                     <label for="Service">Service</label>
-                                                    <select class="form-control" id="Service" name="Service" >
+                                                    <select class="form-control" id="Service" name="Service"  Onchange="SelectAgent(this.value);" >
                                                     <option value="" selected></option>
                                                     {% if services is defined %}
                                                             {% for service in services %}
@@ -230,6 +232,26 @@
                                                                     {% endif %}
                                                                     {% else %}
                                                                     <option value={{service.id}} >{{service.service}}</option>
+                                                                {% endif %}
+                                                                
+                                                            {% endfor %}
+                                                    {% endif %}   
+                                                    </select>
+                                                </div>
+                                                <div class="form-group" {% if (arrivee.agent == null ) or (arrivee.agent != null and arrivee.service != null )   %} style="display:none;" {% endif %} id="DivAgent">
+                                                    <label for="Agent">Agent</label>
+                                                    <select class="form-control" id="Agent" name="Agent" >
+                                                    <option value="" selected></option>
+                                                    {% if agents is defined %}
+                                                            {% for agent in agents %}
+                                                                {% if arrivee.agent != null  %}
+                                                                    {% if agent.id == arrivee.agent.id %}
+                                                                        <option value={{agent.id}} selected>{{agent.Civilite}} {{agent.Nom}} {{agent.Prenom}}</option>
+                                                                        {% else %}
+                                                                        <option value={{agent.id}} >{{agent.Civilite}} {{agent.Nom}} {{agent.Prenom}}</option>
+                                                                    {% endif %}
+                                                                    {% else %}
+                                                                    <option value={{agent.id}} >{{agent.Civilite}} {{agent.Nom}} {{agent.Prenom}}</option>
                                                                 {% endif %}
                                                                 
                                                             {% endfor %}
@@ -285,8 +307,118 @@
                                     {% endif %} 
                             
                             </div>
-                            <div class="tab-pane fade" id="tab5primary">Contenu Service</div>
-                            <div class="tab-pane fade" id="tab6primary">Contenu Agent</div>
+                            {% if arrivee.service != null %}
+                                <div class="tab-pane fade" id="tab5primary">
+
+                                    <div class="form-group" >
+                                        <label for="Agent">Agent</label>
+                                        <select class="form-control" id="AgentService" name="AgentService" >
+                                        <option value="" selected></option>
+                                        {% if agents is defined %}
+                                                {% for agent in agents %}
+                                                    {% if arrivee.agent != null  %}
+                                                        {% if agent.id == arrivee.agent.id %}
+                                                            <option value={{agent.id}} selected>{{agent.Civilite}} {{agent.Nom}} {{agent.Prenom}}</option>
+                                                            {% else %}
+                                                            <option value={{agent.id}} >{{agent.Civilite}} {{agent.Nom}} {{agent.Prenom}}</option>
+                                                        {% endif %}
+                                                        {% else %}
+                                                        <option value={{agent.id}} >{{agent.Civilite}} {{agent.Nom}} {{agent.Prenom}}</option>
+                                                    {% endif %}
+                                                    
+                                                {% endfor %}
+                                        {% endif %}   
+                                        </select>
+                                    </div>
+
+                                     {% if serviceControles is defined %}
+                                            {% for controle in serviceControles %}
+                                                {% set valeurAction = null %}
+                                                    {% if serviceControles is defined %}
+                                                        {% for action in actions %}
+                                                            {% if action.controle == controle %}
+                                                            {% set valeurAction = action.value %}
+                                                            
+                                                            {% endif %}
+
+                                                        {% endfor %}
+                                                    {% endif %} 
+                                                {% if controle.type == "checkbox" %}
+                                                    
+                                                    <div class="checkbox">
+                                                        {% if  valeurAction is null or valeurAction == 'off' %}
+                                                            <label><input type="{{controle.type}}" id="controle_{{controle.id}}" name="controle_{{controle.id}}" >{{controle.label}}</label>
+                                                        {% elseif valeurAction == '' or valeurAction == 'on' %}
+                                                            <label><input type="{{controle.type}}" id="controle_{{controle.id}}" name="controle_{{controle.id}}" checked>{{controle.label}}</label>
+                                                        {% endif %}
+                                                        
+                                                    </div>
+                                                {% elseif controle.type == "textarea" %}
+                                                    <div class="form-group">
+                                                        <label for="controle_{{controle.id}}" >{{controle.label}}</label>
+                                                        <textarea  id="controle_{{controle.id}}" name="controle_{{controle.id}}"   class="form-control" placeholder="{{controle.label}}" rows="5">{{valeurAction }}</textarea>
+                                                    </div>
+                                                {% else %}
+                                                    <div class="form-group">
+                                                        <label for="Fax" >{{controle.label}}</label>
+                                                        <input type="{{controle.type}}" id="controle_{{controle.id}}" name="controle_{{controle.id}}"  class="form-control" placeholder="{{controle.label}}" value="{{valeurAction }}">
+                                                    </div>
+                                                {% endif %} 
+                                            {% endfor %}
+                                    {% endif %}
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                </div>
+                            {% endif %}
+                            {% if arrivee.agent != null %}
+                            <div class="tab-pane fade" id="tab6primary">
+                          
+                            {% if agentControles is defined %}
+                                        {% for controle in agentControles %}
+                                            {% set valeurAction = null %}
+                                                {% if agentControles is defined %}
+                                                    {% for action in actions %}
+                                                        {% if action.controle == controle %}
+                                                        {% set valeurAction = action.value %}
+                                                        
+                                                        {% endif %}
+
+                                                    {% endfor %}
+                                                {% endif %} 
+                                            {% if controle.type == "checkbox" %}
+                                                
+                                                <div class="checkbox">
+                                                    {% if  valeurAction is null or valeurAction == 'off' %}
+                                                        <label><input type="{{controle.type}}" id="controle_{{controle.id}}" name="controle_{{controle.id}}" >{{controle.label}}</label>
+                                                    {% elseif valeurAction == '' or valeurAction == 'on' %}
+                                                        <label><input type="{{controle.type}}" id="controle_{{controle.id}}" name="controle_{{controle.id}}" checked>{{controle.label}}</label>
+                                                    {% endif %}
+                                                    
+                                                </div>
+                                            {% elseif controle.type == "textarea" %}
+                                                <div class="form-group">
+                                                    <label for="controle_{{controle.id}}" >{{controle.label}}</label>
+                                                    <textarea  id="controle_{{controle.id}}" name="controle_{{controle.id}}"   class="form-control" placeholder="{{controle.label}}" rows="5">{{valeurAction }}</textarea>
+                                                </div>
+                                            {% else %}
+                                                <div class="form-group">
+                                                    <label for="Fax" >{{controle.label}}</label>
+                                                    <input type="{{controle.type}}" id="controle_{{controle.id}}" name="controle_{{controle.id}}"  class="form-control" placeholder="{{controle.label}}" value="{{valeurAction }}">
+                                                </div>
+                                            {% endif %} 
+                                        {% endfor %}
+                                {% endif %}
+                            
+                            
+                            </div>
+                            {% endif %}
+                            
+                            
                         </div>
                     </div>
             </div>
@@ -422,8 +554,10 @@
         });
 
     function chargerServices($idDep){
-            var route="{{ path('ChargerServices',{'id': 'idDep'}) }}";
-            route=route.replace('idDep',$idDep)
+        if(document.getElementById('Service')){
+
+        var route="{{ path('ChargerServices',{'id': 'idDep'}) }}";
+        route=route.replace('idDep',$idDep)
            
         $.ajax({
             url: route,
@@ -450,6 +584,20 @@
                 
             }
         });
+
+
+        }
+        
+    }
+
+    function SelectAgent($id){
+        if ($id != ''){
+            document.getElementById('DivAgent').style.display ="none" ;
+        }else{
+            document.getElementById('Agent').value ="" ;
+            document.getElementById('DivAgent').style.display ="block" ;
+        }
+
     }
 
     function removeOptions(selectbox) {
